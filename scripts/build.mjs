@@ -139,10 +139,11 @@ function renderSection(key, cfg, itemsHTML) {
   head += `
     </div>`;
 
-  // The track holds the items twice for a seamless -50% loop.
+  // The track holds the items twice for a seamless -50% loop; carousel.js reads
+  // data-direction / data-speed to drive the Web Animations marquee.
   return `  <section class="section" id="section-${key.toLowerCase()}">
 ${head}
-    <div class="carousel" data-direction="${esc(carousel.direction)}" style="--speed:${speed}s;">
+    <div class="carousel" data-direction="${esc(carousel.direction)}" data-speed="${speed}">
       <div class="track">
 ${itemsHTML}
 ${itemsHTML}
@@ -151,18 +152,41 @@ ${itemsHTML}
   </section>`;
 }
 
+// Header identity block with blank "line jumps" between groups (no margins — each blank
+// line is one real 18px line, matching the mockup).
+function renderHeader(header) {
+  const blank = `      <p>&nbsp;</p>`;
+  const handle = header.instagram
+    ? `<p><a href="${esc(header.instagram)}" target="_blank" rel="noopener">${esc(header.handle)}</a></p>`
+    : `<p>${esc(header.handle)}</p>`;
+  const groups = [
+    [`<p>${esc(header.name)}</p>`],
+    [
+      handle,
+      `<p><a href="mailto:${esc(header.email)}">${esc(header.email.toUpperCase())}</a></p>`,
+    ],
+    [`<p>Copyright ${esc(header.copyright)}</p>`],
+  ];
+  return groups
+    .map(g => g.map(line => `      ${line}`).join("\n"))
+    .join(`\n${blank}\n`);
+}
+
 function renderLangSwitch(languages) {
   return languages
     .map(l => `<button type="button" data-lang="${esc(l.code)}">${esc(l.label)}</button>`)
     .join('<span class="sep">•</span>');
 }
 
+// The badge always shows all three languages (built client-side from site-data), so the
+// markup is just an empty ring plus the mailto link.
 function renderBadge(cfg) {
   const b = cfg.i18n.badge;
   const subject = encodeURIComponent(b.ca || "Encàrrec");
+  const aria = [b.ca, b.es, b.en].filter(Boolean).join(" · ");
   return `  <div class="badge">
-    <a href="mailto:${esc(cfg.header.email)}?subject=${subject}" aria-label="${esc(b.ca)}">
-      <span class="ring"${i18nAttrs(b.ca, b.es, b.en)}></span>
+    <a href="mailto:${esc(cfg.header.email)}?subject=${subject}" aria-label="${esc(aria)}">
+      <span class="ring"></span>
     </a>
   </div>`;
 }
@@ -232,9 +256,11 @@ async function main() {
   let css = fs.readFileSync(path.join(SRC_DIR, "styles.css.template"), "utf8");
   const tokens = {
     backgroundColor: t.backgroundColor, textColor: t.textColor, fontFamily: t.fontFamily,
-    fontSize: t.fontSize, lineHeight: t.lineHeight, imageBorder: t.imageBorder,
-    soldDotColor: t.soldDotColor, soldDotSize: t.soldDotSize, captionGap: t.captionGap,
-    itemSpacing: t.itemSpacing, sectionSpacing: t.sectionSpacing,
+    fontWeight: t.fontWeight, fontSize: t.fontSize, lineHeight: t.lineHeight,
+    imageBorder: t.imageBorder, soldDotColor: t.soldDotColor, soldDotSize: t.soldDotSize,
+    soldDotGap: t.soldDotGap, itemSpacing: t.itemSpacing, siteMargin: t.siteMargin,
+    bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing,
+    badgeColor: t.badgeColor, badgeFontSize: t.badgeFontSize, linkHoverColor: t.linkHoverColor,
   };
   for (const [k, v] of Object.entries(tokens)) {
     css = css.replaceAll(`{{${k}}}`, String(v));
@@ -245,15 +271,12 @@ async function main() {
   const siteData = JSON.stringify({
     defaultLang: cfg.i18n.defaultLang,
     languages: cfg.i18n.languages.map(l => l.code),
+    badge: cfg.i18n.badge,
   });
   let html = fs.readFileSync(path.join(SRC_DIR, "template.html"), "utf8");
   const repl = {
     LANG: cfg.i18n.defaultLang,
-    HEADER_NAME: esc(cfg.header.name),
-    HEADER_HANDLE: esc(cfg.header.handle),
-    HEADER_EMAIL: esc(cfg.header.email),
-    HEADER_EMAIL_LABEL: esc(cfg.header.email.toUpperCase()),
-    HEADER_COPYRIGHT: esc(`Copyright ${cfg.header.copyright}`),
+    HEADER: renderHeader(cfg.header),
     LANG_SWITCH: renderLangSwitch(cfg.i18n.languages),
     SECTIONS: sectionsHTML,
     BADGE: renderBadge(cfg),

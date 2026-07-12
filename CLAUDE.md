@@ -4,24 +4,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter/sculptor. The site showcases his artwork and is deployed via **GitHub Pages**.
+A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter. It is a single static page with two infinite, opposite-direction image carousels (*Obra Personal*, *Obra Acadèmica*), built from a data file + images and deployed to **GitHub Pages** via GitHub Actions. Live at https://miquelduranfrigola.github.io/jdfrigola/.
 
-As of this writing the repository is at an early stage: it contains the artwork assets (`content/`) and the design mockups (`docs/`), but the site code itself has not been built yet. When scaffolding the site, keep it a static site so it can be served directly by GitHub Pages.
+## Architecture
 
-## Repository layout
+A Node build (`scripts/build.mjs`, using `sharp`) reads three inputs and emits a self-contained static site into `dist/`:
 
-- `content/` — the artwork, the source of truth for what the gallery displays. Organized into two collections that map to site sections:
-  - `OBRA ACADEMICA/` — academic work from art school (casts, long-pose figure studies, still lifes, self-portrait). Filenames are prefixed `Jdfrigola_BAA_`.
-  - `OBRA PERSONAL/` — personal/original work. Filenames are prefixed `Jdfrigola_Obra_`.
-  - Image titles are encoded in the filename in **Catalan** (e.g. `El_Menjador_De_Casa` → "El menjador de casa"). Derive human-readable, accented titles from these when generating captions.
-- `docs/` — design references, **not** the GitHub Pages source. `web_jdf_02.pdf` is the visual mockup of the intended site; `*.indd` are the Adobe InDesign source files for those mockups. Treat these as the authoritative design spec for layout, typography, and page structure.
+- **`artworks.csv`** — one row per painting; the **artist edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
+- **`site.config.json`** — all theme tokens (colours, font, sizes, spacing, badge) and fixed UI text in CA/ES/EN (header, section labels, academic subtitle, commissions badge). Everything visual is parametrized here.
+- **`content/OBRA PERSONAL/` and `content/OBRA ACADEMICA/`** — the source images (all JPEG), the source of truth for what displays.
 
-## Important conventions
+The template lives in `src/` (`template.html`, `styles.css.template` with `{{token}}` placeholders, `carousel.js`). The build injects tokens into the CSS, renders the HTML (each translatable node carries `data-ca/-es/-en` for the client-side language toggle), converts/optimizes images, and copies `carousel.js`. `carousel.js` drives the marquee via the **Web Animations API** (eased pause on hover through `playbackRate` tweening), the CAT/ESP/ENG toggle, and the circular commissions badge.
 
-- **Language is Catalan.** Section names, artwork titles, and site copy should be in Catalan, matching the content folders and filenames.
-- **HEIC images must be converted** before use on the web — several source files are `.heic`/`.HEIC` (e.g. `Jdfrigola_BAA_Longpose_Mariana.heic`), which browsers do not display reliably. Convert to web-friendly formats (JPEG/WebP) and keep the originals untouched in `content/`; do not overwrite source assets with converted versions.
-- **`docs/` collides with the common GitHub Pages source directory.** GitHub Pages can be configured to serve from `/docs` on the main branch — but here `docs/` holds design files, not the site. Configure Pages to publish from the site root or a `gh-pages` branch / GitHub Actions build instead, and do not put the built site into `docs/`.
+## Design rules (strict — from the artist)
 
-## Deployment
+- **Typography: Geist Mono, weight 400 (Regular), 14px, line-height 18px.** Never add margins or padding between lines of text — vertical spacing between text lines comes **only** from `line-height`. To create a gap (e.g. the header groups), insert a real blank line (an empty `<p>&nbsp;</p>`), not a margin.
+- **Page margin is 20px**, but **carousels are full-bleed** (they slide edge-to-edge, ignoring the margin — forma.co style). The 20px side margin is applied to text blocks only, not the carousel.
+- Images: 1px black border; separated by exactly 5px; sold dot is 20px, right-aligned, 10px above the image.
+- *Obra Personal* scrolls right→left; *Obra Acadèmica* left→right.
 
-Target is GitHub Pages. Whatever build approach is chosen, the published output must be plain static files (HTML/CSS/JS/assets). Confirm the Pages source setting matches the actual build output location (see the `docs/` caveat above).
+## Conventions
+
+- **Language is Catalan-first** (CA/ES/EN toggle; CA is the fallback). Titles/labels come from `artworks.csv` and `site.config.json`.
+- **New/replacement images must be JPEG**, placed in the matching `content/` folder; add or edit the CSV row (same filename = drop-in replace, no CSV change).
+- **`docs/` is NOT the site source** — it holds the InDesign/PDF design mockups (`web_jdf_02.pdf` is the authoritative visual spec). GitHub Pages is configured with source = **GitHub Actions**, so `docs/` is never published; do not put built output there.
+
+## Commands
+
+- `npm run build` — regenerate `dist/` from the CSV + config + images.
+- `npm run dev` — build and serve `dist/` locally.
+- Pushing to `main` triggers `.github/workflows/deploy.yml` (build + deploy to Pages).

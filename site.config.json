@@ -4,21 +4,27 @@
   "theme": {
     "backgroundColor": "rgb(210, 190, 210)",
     "textColor": "rgb(0, 0, 0)",
-    "fontFamily": "'Space Mono', monospace",
+    "fontFamily": "'Geist Mono', monospace",
+    "fontWeight": 400,
     "fontSize": "14px",
     "lineHeight": "18px",
     "imageBorder": "1px solid rgb(0, 0, 0)",
     "soldDotColor": "rgb(220, 30, 30)",
-    "soldDotSize": "14px",
+    "soldDotSize": "20px",
+    "soldDotGap": "10px",
     "defaultImageWidth": 16,
-    "captionGap": "6px",
-    "itemSpacing": "40px",
-    "sectionSpacing": "90px"
+    "itemSpacing": "5px",
+    "siteMargin": "20px",
+    "bottomMargin": "200px",
+    "sectionSpacing": "90px",
+    "badgeColor": "rgb(200, 0, 0)",
+    "badgeFontSize": "14px",
+    "linkHoverColor": "rgb(200, 0, 0)"
   },
 
   "carousels": {
-    "PERSONAL": { "folder": "OBRA PERSONAL", "direction": "right", "scrollSpeed": 90 },
-    "ACADEMICA": { "folder": "OBRA ACADEMICA", "direction": "left", "scrollSpeed": 90 }
+    "PERSONAL": { "folder": "OBRA PERSONAL", "direction": "left", "scrollSpeed": 45 },
+    "ACADEMICA": { "folder": "OBRA ACADEMICA", "direction": "right", "scrollSpeed": 45 }
   },
 
   "images": {
@@ -29,6 +35,7 @@
   "header": {
     "name": "JOSEP DURAN FRIGOLA",
     "handle": "@JDFRIGOLA",
+    "instagram": "https://www.instagram.com/jdfrigola",
     "email": "bondia@jdfrigola.com",
     "copyright": "©2026"
   },

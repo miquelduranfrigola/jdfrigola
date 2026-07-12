@@ -1,19 +1,29 @@
 /* This file is a TEMPLATE. The build (scripts/build.mjs) replaces the tokens
    below with values from site.config.json and writes the result to dist/styles.css.
-   Do not edit dist/styles.css by hand — edit site.config.json (tokens) or this file. */
+   Do not edit dist/styles.css by hand — edit site.config.json (tokens) or this file.
+
+   TYPOGRAPHY RULE (strict): body text is Geist Mono Regular 400, 14px / 18px line-height.
+   Never add margins or padding between text lines — vertical spacing between lines of
+   text comes ONLY from line-height. Use blank lines (an empty line) to create gaps. */
 
 :root {
   --bg: {{backgroundColor}};
   --fg: {{textColor}};
   --font: {{fontFamily}};
+  --font-weight: {{fontWeight}};
   --font-size: {{fontSize}};
   --line-height: {{lineHeight}};
   --img-border: {{imageBorder}};
   --sold-color: {{soldDotColor}};
   --sold-size: {{soldDotSize}};
-  --caption-gap: {{captionGap}};
+  --sold-gap: {{soldDotGap}};
   --item-spacing: {{itemSpacing}};
+  --site-margin: {{siteMargin}};
+  --bottom-margin: {{bottomMargin}};
   --section-spacing: {{sectionSpacing}};
+  --badge-color: {{badgeColor}};
+  --badge-font-size: {{badgeFontSize}};
+  --link-hover: {{linkHoverColor}};
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,14 +34,28 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font);
+  font-weight: var(--font-weight);
   font-size: var(--font-size);
   line-height: var(--line-height);
-  padding: 24px;
+  /* 20px top margin; sides are 0 so carousels can go full-bleed (the side margin is
+     applied to the text blocks below instead); larger breathing room at the bottom.
+     The fixed badge is anchored to the viewport, so it ignores this bottom margin. */
+  padding: var(--site-margin) 0 var(--bottom-margin);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 a { color: inherit; text-decoration: none; }
+/* The only hover cue on links and the language switch: turn red. */
+a:hover,
+.lang-switch button:hover { color: var(--link-hover); }
+
+/* Text blocks carry the 20px side margin; carousels do not. */
+.site-header,
+.section-head {
+  padding-left: var(--site-margin);
+  padding-right: var(--site-margin);
+}
 
 /* ---------- Header ---------- */
 .site-header {
@@ -49,15 +73,15 @@ a { color: inherit; text-decoration: none; }
   background: none; border: 0; padding: 0; cursor: pointer;
   font: inherit; color: inherit; text-transform: uppercase;
 }
-.lang-switch button[aria-pressed="true"] { text-decoration: underline; }
 .lang-switch .sep { user-select: none; }
 
 /* ---------- Sections ---------- */
 .section { margin-bottom: var(--section-spacing); }
-.section-head { text-transform: uppercase; margin-bottom: 20px; }
+.section:last-child { margin-bottom: 0; } /* bottom spacing comes from the body's bottom margin */
+.section-head { text-transform: uppercase; margin-bottom: var(--line-height); }
 .section-subtitle { text-transform: uppercase; }
 
-/* ---------- Carousel ---------- */
+/* ---------- Carousel (full-bleed: spans the whole viewport width) ---------- */
 .carousel { overflow: hidden; width: 100%; }
 .track {
   display: flex;
@@ -65,17 +89,10 @@ a { color: inherit; text-decoration: none; }
   width: max-content;
   will-change: transform;
 }
-.carousel[data-direction="left"]  .track { animation: scroll-left  var(--speed) linear infinite; }
-.carousel[data-direction="right"] .track { animation: scroll-right var(--speed) linear infinite; }
-
-/* Pause on hover — the only hover effect on the site */
-.carousel:hover .track { animation-play-state: paused; }
-
-@keyframes scroll-left  { from { transform: translateX(0);     } to { transform: translateX(-50%); } }
-@keyframes scroll-right { from { transform: translateX(-50%); } to { transform: translateX(0);     } }
+/* The marquee itself (and its eased pause-on-hover) is driven by carousel.js via the
+   Web Animations API, so there is no CSS @keyframes animation here. */
 
 @media (prefers-reduced-motion: reduce) {
-  .track { animation: none !important; }
   .carousel { overflow-x: auto; }
 }
 
@@ -90,9 +107,8 @@ a { color: inherit; text-decoration: none; }
 .caption {
   display: flex;
   flex-direction: column;
-  gap: var(--caption-gap);
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: var(--line-height);
 }
 .artwork img {
   display: block;
@@ -107,32 +123,34 @@ a { color: inherit; text-decoration: none; }
   height: var(--sold-size);
   border-radius: 50%;
   background: var(--sold-color);
-  margin-top: 14px;
+  margin-top: var(--sold-gap);
+  align-self: flex-end; /* aligned to the right edge of the image */
 }
 
-/* ---------- Commissions badge (pure CSS text, no image) ---------- */
+/* ---------- Commissions badge (pure CSS text, no image) ----------
+   Size + character placement are computed in carousel.js so the ring always fits
+   all three languages. This file only sets position, colour and rotation. */
 .badge {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
-  width: 130px;
-  height: 130px;
+  right: var(--site-margin);
+  bottom: var(--site-margin);
+  color: var(--badge-color);
   z-index: 50;
 }
-.badge a { display: block; width: 100%; height: 100%; position: relative; }
-.badge .ring { position: absolute; inset: 0; animation: badge-spin 14s linear infinite; }
+.badge a { display: block; width: 100%; height: 100%; position: relative; color: inherit; }
+.badge .ring { position: absolute; inset: 0; animation: badge-spin 20s linear infinite; }
 .badge .ring span {
   position: absolute;
   left: 50%;
   top: 50%;
   font-family: var(--font);
-  font-size: 11px;
+  font-weight: var(--font-weight);
+  font-size: var(--badge-font-size);
   line-height: 1;
   text-transform: uppercase;
 }
-@keyframes badge-spin { to { transform: rotate(360deg); } }
+@keyframes badge-spin { to { transform: rotate(-360deg); } } /* counterclockwise */
 
 @media (max-width: 640px) {
-  .badge { width: 104px; height: 104px; right: 12px; bottom: 12px; }
   .site-header { flex-direction: column; }
 }
