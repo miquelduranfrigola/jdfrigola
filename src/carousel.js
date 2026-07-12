@@ -1,6 +1,8 @@
 /* Front-end behavior for the jdfrigola portfolio:
-   - Infinite marquee carousels via the Web Animations API, with an EASED pause on hover
-     (playbackRate tweened to 0, not stopped abruptly).
+   - Infinite marquee carousels driven by a requestAnimationFrame position loop: auto-scroll
+     plus drag/swipe (touch, mouse, trackpad) with momentum that settles back into the
+     auto-scroll; hovering an image eases it to a slow crawl.
+   - Image top-alignment: caption heights normalized per row so all image tops line up.
    - Language toggle (CAT / ESP / ENG) for captions and labels, persisted in localStorage.
    - Commissions badge: circular text showing ALL THREE languages at once (independent of
      the toggle), auto-sized so every character fits. */

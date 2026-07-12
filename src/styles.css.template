@@ -100,9 +100,8 @@ a:hover,
   cursor: grab;
 }
 .carousel.dragging .track { cursor: grabbing; }
-.artwork img { -webkit-user-drag: none; user-select: none; }
-/* The marquee itself (and its eased pause-on-hover) is driven by carousel.js via the
-   Web Animations API, so there is no CSS @keyframes animation here. */
+/* The marquee, drag/swipe and eased hover-slow are all driven by carousel.js
+   (a requestAnimationFrame loop), so there is no CSS animation here. */
 
 @media (prefers-reduced-motion: reduce) {
   /* No JS marquee: fall back to native horizontal scrolling (needs touch-action back). */
@@ -130,6 +129,8 @@ a:hover,
   aspect-ratio: var(--ar);
   object-fit: cover;
   border: var(--img-border);
+  user-select: none;
+  -webkit-user-drag: none; /* no ghost-drag image while dragging the carousel */
 }
 .sold-dot {
   width: var(--sold-size);
