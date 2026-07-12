@@ -16,6 +16,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
@@ -314,6 +315,15 @@ async function main() {
   for (const [k, v] of Object.entries(repl)) {
     html = html.replaceAll(`{{${k}}}`, v);
   }
+
+  // Cache-busting: append a short content hash to the CSS/JS URLs so browsers refetch
+  // immediately after a deploy that changed them (GitHub Pages caches assets ~10 min),
+  // while unchanged files keep their URL and stay cached.
+  const jsContent = fs.readFileSync(path.join(SRC_DIR, "carousel.js"), "utf8");
+  const hash = s => crypto.createHash("md5").update(s).digest("hex").slice(0, 8);
+  html = html
+    .replace('href="styles.css"', `href="styles.css?v=${hash(css)}"`)
+    .replace('src="carousel.js"', `src="carousel.js?v=${hash(jsContent)}"`);
   fs.writeFileSync(path.join(DIST_DIR, "index.html"), html);
 
   // Copy the (static) front-end script verbatim.
