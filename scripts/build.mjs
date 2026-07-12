@@ -118,7 +118,9 @@ function renderArtwork(row, img, theme) {
   }
   if (row.size) lines.push(`<span class="c-size">${esc(row.size)}</span>`);
 
-  return `      <figure class="artwork" style="--w:${esc(width)}; --ar:${ar};">
+  const orientation = img.width > img.height ? "landscape" : "portrait";
+
+  return `      <figure class="artwork ${orientation}" style="--w:${esc(width)}; --ar:${ar};">
         <figcaption class="caption">
           ${lines.join("\n          ")}
         </figcaption>
@@ -274,6 +276,7 @@ async function main() {
     soldDotGap: t.soldDotGap, itemSpacing: t.itemSpacing, siteMargin: t.siteMargin,
     bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing, sectionHeadGap: t.sectionHeadGap,
     captionImageGap: t.captionImageGap, mobileBreakpoint: t.mobileBreakpoint, mobileImageWidth: t.mobileImageWidth,
+    mobileImageWidthLandscape: t.mobileImageWidthLandscape,
     badgeColor: t.badgeColor, badgeFontSize: t.badgeFontSize, linkHoverColor: t.linkHoverColor,
   };
   for (const [k, v] of Object.entries(tokens)) {

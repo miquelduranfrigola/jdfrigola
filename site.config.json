@@ -24,6 +24,7 @@
     "captionImageGap": "10px",
     "mobileBreakpoint": "600px",
     "mobileImageWidth": 60,
+    "mobileImageWidthLandscape": 120,
     "badgeColor": "rgb(200, 0, 0)",
     "badgeFontSize": "12px",
     "linkHoverColor": "rgb(200, 0, 0)",

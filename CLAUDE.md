@@ -22,7 +22,7 @@ The template lives in `src/` (`template.html`, `styles.css.template` with `{{tok
 ## Design rules (strict — from the artist)
 
 - **Typography: Geist Mono, weight 400 (Regular), 12px, line-height 14px.** Never add margins or padding between lines of text — vertical spacing between text lines comes **only** from `line-height`. To create a gap (e.g. the header groups), insert a real blank line (an empty `<p>&nbsp;</p>`), not a margin.
-- **Below 600px (mobile), all images are 60vw.** Image tops are equalized in JS (`equalizeCaptions` in `src/carousel.js` normalizes each row's caption heights to the tallest), so all images in a carousel start at the same Y regardless of caption wrapping.
+- **Below 600px (mobile):** portrait images are 60vw, landscape (horizontal) images 120vw (the build tags each `.artwork` with a `portrait`/`landscape` class from its aspect ratio). Image tops are equalized in JS (`equalizeCaptions` in `src/carousel.js` normalizes each row's caption heights to the tallest), so all images in a carousel start at the same Y regardless of caption wrapping.
 - **Page margin is 20px**, but **carousels are full-bleed** (they slide edge-to-edge, ignoring the margin — forma.co style). The 20px side margin is applied to text blocks only, not the carousel.
 - Images: 1px black border; separated by exactly 5px; sold dot is 20px, right-aligned, 10px above the image.
 - *Obra Personal* scrolls right→left; *Obra Acadèmica* left→right.

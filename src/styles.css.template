@@ -24,6 +24,7 @@
   --section-head-gap: {{sectionHeadGap}};
   --caption-image-gap: {{captionImageGap}};
   --mobile-image-width: {{mobileImageWidth}};
+  --mobile-image-width-landscape: {{mobileImageWidthLandscape}};
   --badge-color: {{badgeColor}};
   --badge-font-size: {{badgeFontSize}};
   --link-hover: {{linkHoverColor}};
@@ -160,7 +161,9 @@ a:hover,
   .site-header { flex-direction: column; }
 }
 
-/* Phone layout: all images take 60% of the viewport width (overrides per-artwork --w). */
+/* Phone layout: portrait images take 60vw, landscape (horizontal) ones 120vw
+   (overrides the per-artwork --w). */
 @media (max-width: {{mobileBreakpoint}}) {
-  .artwork { width: calc(var(--mobile-image-width) * 1vw); }
+  .artwork.portrait  { width: calc(var(--mobile-image-width) * 1vw); }
+  .artwork.landscape { width: calc(var(--mobile-image-width-landscape) * 1vw); }
 }
