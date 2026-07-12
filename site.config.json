@@ -1,6 +1,9 @@
 {
   "_comment": "Global site settings. The artist edits artworks.csv for the paintings; this file controls the look and the fixed text. All colors, fonts and sizes are parametrized here.",
 
+  "_customDomain_help": "Leave empty until the domain is registered AND its DNS points at GitHub Pages. Setting it makes the build emit dist/CNAME, which switches the site to that domain (and redirects the github.io URL to it).",
+  "customDomain": "",
+
   "theme": {
     "backgroundColor": "rgb(210, 190, 210)",
     "textColor": "rgb(0, 0, 0)",

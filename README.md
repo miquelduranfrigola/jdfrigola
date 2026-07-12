@@ -70,6 +70,24 @@ Pushing to `main` triggers `.github/workflows/deploy.yml`, which runs the build 
 publishes `dist/` to GitHub Pages. In **Settings → Pages**, the source must be set to
 **GitHub Actions** (not the `docs/` folder — `docs/` holds the original design mockups).
 
+## Custom domain (jdfrigola.com)
+
+The machinery is in place but **switched off** (`customDomain` is empty in `site.config.json`).
+Do NOT turn it on before DNS is ready, or the `github.io` URL will redirect to a domain that
+doesn't resolve yet.
+
+Activate it in this order:
+
+1. **Register** `jdfrigola.com` (Cloudflare Registrar).
+2. In Cloudflare **DNS**, add (set each to *DNS only* — grey cloud, not proxied):
+   - `A  @  185.199.108.153`, `.109.153`, `.110.153`, `.111.153` (four A records)
+   - `AAAA  @  2606:50c0:8000::153`, `:8001::153`, `:8002::153`, `:8003::153` (four AAAA)
+   - `CNAME  www  miquelduranfrigola.github.io`
+3. Wait until `jdfrigola.com` resolves to those IPs (minutes–hours).
+4. Set `"customDomain": "jdfrigola.com"` in `site.config.json` and push (the build then
+   writes `dist/CNAME`), and set the domain in **Settings → Pages** (or via `gh api`).
+5. Once GitHub provisions the certificate, enable **Enforce HTTPS**.
+
 ## License
 
 © 2026 Josep Duran Frigola. All artwork and code in this repository are licensed under

@@ -314,6 +314,14 @@ async function main() {
   // .nojekyll so GitHub Pages serves files/folders as-is.
   fs.writeFileSync(path.join(DIST_DIR, ".nojekyll"), "");
 
+  // Custom domain: only emit a CNAME when configured. Doing so switches GitHub Pages
+  // to that domain — set it ONLY after the domain's DNS points at Pages.
+  const domain = (cfg.customDomain || "").trim();
+  if (domain) {
+    fs.writeFileSync(path.join(DIST_DIR, "CNAME"), domain + "\n");
+    log(`Custom domain: ${domain} (wrote dist/CNAME)`);
+  }
+
   const total = bySection.PERSONAL.length + bySection.ACADEMICA.length;
   log(`\nBuilt dist/ — ${total} images (PERSONAL: ${bySection.PERSONAL.length}, ACADEMICA: ${bySection.ACADEMICA.length}).`);
 }
