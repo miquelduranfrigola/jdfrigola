@@ -41,11 +41,14 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
-// Minimal but correct CSV parser: handles quoted fields, embedded commas,
-// escaped double-quotes ("") and quoted newlines. Returns array of objects
-// keyed by the header row.
+// Minimal but correct CSV parser: handles quoted fields, embedded delimiters,
+// escaped double-quotes ("") and quoted newlines. The delimiter is auto-detected
+// from the header row (comma or semicolon — Excel exports semicolons in many
+// European locales). Returns array of objects keyed by the header row.
 function parseCSV(text) {
   text = text.replace(/^﻿/, ""); // strip BOM (Excel)
+  const firstLine = text.split(/\r?\n/, 1)[0] || "";
+  const DELIM = (firstLine.split(";").length - 1) > (firstLine.split(",").length - 1) ? ";" : ",";
   const rows = [];
   let row = [];
   let field = "";
@@ -59,7 +62,7 @@ function parseCSV(text) {
       } else field += c;
     } else if (c === '"') {
       inQuotes = true;
-    } else if (c === ",") {
+    } else if (c === DELIM) {
       row.push(field); field = "";
     } else if (c === "\r") {
       // ignore; handled by \n
@@ -283,13 +286,21 @@ async function main() {
     languages: cfg.i18n.languages.map(l => l.code),
     badge: cfg.i18n.badge,
   });
+  // Commissions badge on/off switch: edit commissions.txt (on/off). Missing file = on.
+  let commissionsOn = true;
+  const cxPath = path.join(ROOT, "commissions.txt");
+  if (fs.existsSync(cxPath)) {
+    commissionsOn = !/^\s*(off|no|false|0|disable)/i.test(fs.readFileSync(cxPath, "utf8"));
+  }
+  log(`Commissions badge: ${commissionsOn ? "on" : "off"}`);
+
   let html = fs.readFileSync(path.join(SRC_DIR, "template.html"), "utf8");
   const repl = {
     LANG: cfg.i18n.defaultLang,
     HEADER: renderHeader(cfg.header),
     LANG_SWITCH: renderLangSwitch(cfg.i18n.languages),
     SECTIONS: sectionsHTML,
-    BADGE: renderBadge(cfg),
+    BADGE: commissionsOn ? renderBadge(cfg) : "",
     SITE_DATA: siteData,
   };
   for (const [k, v] of Object.entries(repl)) {

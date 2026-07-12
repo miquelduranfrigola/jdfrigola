@@ -13,6 +13,9 @@ A Node build (`scripts/build.mjs`, using `sharp`) reads three inputs and emits a
 - **`artworks.csv`** — one row per painting; the **artist edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `show` (`no` hides the piece; defaults to yes), `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
 - **`site.config.json`** — all theme tokens (colours, font, sizes, spacing, badge) and fixed UI text in CA/ES/EN (header, section labels, academic subtitle, commissions badge). Everything visual is parametrized here.
 - **`content/OBRA PERSONAL/` and `content/OBRA ACADEMICA/`** — the source images (all JPEG), the source of truth for what displays.
+- **`commissions.txt`** — `on`/`off` switch for the commissions badge (missing file = on).
+
+`artworks.csv` may use commas or semicolons as the delimiter; the parser in `scripts/build.mjs` auto-detects it from the header row (Excel exports semicolons in many locales).
 
 The template lives in `src/` (`template.html`, `styles.css.template` with `{{token}}` placeholders, `carousel.js`). The build injects tokens into the CSS, renders the HTML (each translatable node carries `data-ca/-es/-en` for the client-side language toggle), converts/optimizes images, and copies `carousel.js`. `carousel.js` drives the marquee via the **Web Animations API** (eased pause on hover through `playbackRate` tweening), the CAT/ESP/ENG toggle, and the circular commissions badge.
 

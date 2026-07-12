@@ -38,10 +38,18 @@ If a Spanish or English field is left blank, the site falls back to the Catalan 
 
 ---
 
+## Turning the "commissions" badge on/off
+
+Edit **`commissions.txt`**: write `on` to show the rotating "open for commissions" badge,
+or `off` to hide it. That's the whole file.
+
 ## Look & feel
 
 Colours, font, sizes and the fixed text (header, language labels, the "commissions"
-badge, the academic subtitle) are all in **`site.config.json`**.
+badge text, the academic subtitle) are all in **`site.config.json`**.
+
+The spreadsheet (`artworks.csv`) may be saved with either commas or semicolons as the
+column separator — the build detects it automatically (Excel often uses semicolons).
 
 ---
 
