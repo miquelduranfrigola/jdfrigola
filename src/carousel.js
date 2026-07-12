@@ -32,50 +32,109 @@
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
+  // A single rAF position loop per carousel drives the auto-scroll AND lets the visitor
+  // drag/swipe (touch, mouse, trackpad). Velocity always relaxes toward the auto-scroll
+  // speed, so a fling's momentum decays smoothly back into the normal motion.
   function setupMarquee(carousel) {
     var track = carousel.querySelector(".track");
-    if (!track || reduceMotion) return;
+    if (!track || reduceMotion) return; // reduced motion → native horizontal scroll
 
     var dir = carousel.getAttribute("data-direction") || "left";
-    var speed = parseFloat(carousel.getAttribute("data-speed")) || 45; // seconds per loop
+    var speed = parseFloat(carousel.getAttribute("data-speed")) || 45; // s per half-loop
+    var dirSign = dir === "right" ? -1 : 1;
 
-    // The track holds the items twice; moving by 50% of its own width is one full,
-    // seamless loop. Travel left: 0 -> -50%. Travel right: -50% -> 0.
-    var frames = dir === "right"
-      ? [{ transform: "translateX(-50%)" }, { transform: "translateX(0)" }]
-      : [{ transform: "translateX(0)" }, { transform: "translateX(-50%)" }];
-
-    var anim = track.animate(frames, {
-      duration: speed * 1000,
-      iterations: Infinity,
-      easing: "linear",
-    });
-
-    // Tween playbackRate smoothly (same easing + duration both ways) so the carousel
-    // slows down and speeds back up with a symmetric ramp.
     var slowFactor = typeof data.hoverSlowFactor === "number" ? data.hoverSlowFactor : 0.2;
     var easeMs = typeof data.hoverEaseMs === "number" ? data.hoverEaseMs : 600;
-    var rafId = null;
-    function tweenRate(target) {
-      if (rafId) cancelAnimationFrame(rafId);
-      var from = anim.playbackRate;
-      var startTs = null;
-      function step(ts) {
-        if (startTs === null) startTs = ts;
-        var t = easeMs > 0 ? Math.min(1, (ts - startTs) / easeMs) : 1;
-        anim.playbackRate = from + (target - from) * easeInOutCubic(t);
-        if (t < 1) rafId = requestAnimationFrame(step);
-        else rafId = null;
-      }
-      rafId = requestAnimationFrame(step);
-    }
+    var tau = typeof data.dragSettleMs === "number" ? data.dragSettleMs : 350;
 
-    // While over an IMAGE (not the caption above nor the space/sold-dot below), slow the
-    // carousel to `slowFactor` of full speed — it keeps moving, never a hard stop.
-    // Delegated so it works for every (duplicated) image in the moving track.
+    // half = width of one copy of the item list (the track holds two); wrapping pos at
+    // `half` gives a seamless loop.
+    var half = 1;
+    function measure() { half = (track.scrollWidth / 2) || 1; }
+    measure();
+    window.addEventListener("resize", measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+    var pos = 0;                                  // transform = translateX(-pos)
+    var vel = dirSign * (half / (speed * 1000));  // px/ms, starts at auto speed
+    var dragging = false;
+
+    // Hover slow-down: rate multiplier eased 1 <-> slowFactor (symmetric, same as before).
+    var rm = 1, rmFrom = 1, rmTo = 1, rmStart = -1;
+    function setRate(target) { if (target !== rmTo) { rmFrom = rm; rmTo = target; rmStart = -1; } }
+
+    var lastTs = -1;
+    function frame(ts) {
+      if (lastTs < 0) lastTs = ts;
+      var dt = Math.min(50, ts - lastTs); // clamp so a backgrounded tab doesn't jump
+      lastTs = ts;
+
+      if (rmStart < 0 && rm !== rmTo) rmStart = ts;
+      if (rmStart >= 0) {
+        var te = easeMs > 0 ? Math.min(1, (ts - rmStart) / easeMs) : 1;
+        rm = rmFrom + (rmTo - rmFrom) * easeInOutCubic(te);
+        if (te >= 1) { rm = rmTo; rmStart = -1; }
+      }
+
+      var autoV = dirSign * (half / (speed * 1000)) * rm;
+      if (!dragging) {
+        vel += (autoV - vel) * (1 - Math.exp(-dt / tau)); // momentum → settle to auto
+        pos += vel * dt;
+      }
+      pos = ((pos % half) + half) % half;
+      track.style.transform = "translateX(" + (-pos) + "px)";
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // Hover to slow (mouse only; touch has no hover), image area only.
     function overImage(e) { return e.target && e.target.tagName === "IMG"; }
-    carousel.addEventListener("mouseover", function (e) { if (overImage(e)) tweenRate(slowFactor); });
-    carousel.addEventListener("mouseout", function (e) { if (overImage(e)) tweenRate(1); });
+    carousel.addEventListener("mouseover", function (e) { if (overImage(e)) setRate(slowFactor); });
+    carousel.addEventListener("mouseout", function (e) { if (overImage(e)) setRate(1); });
+
+    // Drag / swipe via Pointer Events (touch, pen, mouse unified). We do NOT capture on
+    // pointerdown — capturing only after a horizontal drag is confirmed keeps native
+    // vertical page scrolling working when a touch starts on a carousel.
+    var THRESH = 4, startX = 0, startY = 0, startPos = 0, pending = false, lastX = 0, lastT = 0;
+    carousel.addEventListener("pointerdown", function (e) {
+      if (e.button && e.button !== 0) return; // primary button / touch only
+      pending = true;
+      startX = e.clientX; startY = e.clientY; startPos = pos;
+      lastX = e.clientX; lastT = e.timeStamp;
+    });
+    carousel.addEventListener("pointermove", function (e) {
+      if (!pending) return;
+      var dx = e.clientX - startX, dy = e.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(dx) < THRESH && Math.abs(dy) < THRESH) return; // still a tap
+        if (Math.abs(dy) > Math.abs(dx)) { pending = false; return; } // vertical → let page scroll
+        dragging = true;
+        carousel.classList.add("dragging");
+        try { carousel.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      e.preventDefault();
+      pos = startPos - dx;
+      var dtp = e.timeStamp - lastT;
+      if (dtp > 0) vel = -((e.clientX - lastX) / dtp); // fling velocity in pos units
+      lastX = e.clientX; lastT = e.timeStamp;
+    });
+    function endDrag(e) {
+      if (!pending) return;
+      pending = false;
+      if (dragging) { dragging = false; carousel.classList.remove("dragging"); }
+      try { carousel.releasePointerCapture(e.pointerId); } catch (err) {}
+      // vel holds the fling; the relax term settles it back into the auto-scroll.
+    }
+    carousel.addEventListener("pointerup", endDrag);
+    carousel.addEventListener("pointercancel", endDrag);
+
+    // Trackpad / horizontal wheel: nudge position, small glide.
+    carousel.addEventListener("wheel", function (e) {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // leave vertical scroll alone
+      e.preventDefault();
+      pos += e.deltaX;
+      vel = e.deltaX / 12;
+    }, { passive: false });
   }
 
   /* ------------------------- Badge ------------------------- */

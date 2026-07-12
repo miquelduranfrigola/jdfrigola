@@ -161,6 +161,7 @@ ${itemsHTML}
 // line is one real 18px line, matching the mockup).
 function renderHeader(header) {
   const blank = `      <p>&nbsp;</p>`;
+  const subject = encodeURIComponent(header.emailSubject || "Hola");
   const handle = header.instagram
     ? `<p><a href="${esc(header.instagram)}" target="_blank" rel="noopener">${esc(header.handle)}</a></p>`
     : `<p>${esc(header.handle)}</p>`;
@@ -168,7 +169,7 @@ function renderHeader(header) {
     [`<p>${esc(header.name)}</p>`],
     [
       handle,
-      `<p><a href="mailto:${esc(header.email)}">${esc(header.email.toUpperCase())}</a></p>`,
+      `<p><a href="mailto:${esc(header.email)}?subject=${subject}">${esc(header.email.toUpperCase())}</a></p>`,
     ],
     [`<p>Copyright ${esc(header.copyright)}</p>`],
   ];
@@ -187,7 +188,7 @@ function renderLangSwitch(languages) {
 // markup is just an empty ring plus the mailto link.
 function renderBadge(cfg) {
   const b = cfg.i18n.badge;
-  const subject = encodeURIComponent(b.ca || "Encàrrec");
+  const subject = encodeURIComponent(cfg.header.emailSubject || "Hola");
   const aria = [b.ca, b.es, b.en].filter(Boolean).join(" · ");
   return `  <div class="badge">
     <a href="mailto:${esc(cfg.header.email)}?subject=${subject}" aria-label="${esc(aria)}">
@@ -291,6 +292,7 @@ async function main() {
     badge: cfg.i18n.badge,
     hoverSlowFactor: cfg.theme.hoverSlowFactor,
     hoverEaseMs: cfg.theme.hoverEaseMs,
+    dragSettleMs: cfg.theme.dragSettleMs,
   });
   // Commissions badge on/off switch: edit commissions.txt (on/off). Missing file = on.
   let commissionsOn = true;

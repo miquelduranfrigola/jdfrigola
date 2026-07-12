@@ -23,13 +23,14 @@
     "sectionHeadGap": "40px",
     "captionImageGap": "10px",
     "mobileBreakpoint": "600px",
-    "mobileImageWidth": 60,
+    "mobileImageWidth": 70,
     "mobileImageWidthLandscape": 120,
     "badgeColor": "rgb(200, 0, 0)",
     "badgeFontSize": "12px",
     "linkHoverColor": "rgb(200, 0, 0)",
     "hoverSlowFactor": 0.2,
-    "hoverEaseMs": 600
+    "hoverEaseMs": 600,
+    "dragSettleMs": 350
   },
 
   "carousels": {
@@ -47,6 +48,7 @@
     "handle": "@JDFRIGOLA",
     "instagram": "https://www.instagram.com/jdfrigola",
     "email": "jdfrigola@gmail.com",
+    "emailSubject": "Hola",
     "copyright": "©2026"
   },
 

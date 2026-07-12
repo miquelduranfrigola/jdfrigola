@@ -88,18 +88,25 @@ a:hover,
 .section-subtitle { text-transform: uppercase; }
 
 /* ---------- Carousel (full-bleed: spans the whole viewport width) ---------- */
-.carousel { overflow: hidden; width: 100%; }
+/* touch-action: pan-y lets vertical page scrolling pass through while we handle
+   horizontal drag/swipe ourselves (see carousel.js). */
+.carousel { overflow: hidden; width: 100%; touch-action: pan-y; }
 .track {
   display: flex;
   align-items: flex-start;
   width: max-content;
   will-change: transform;
+  user-select: none;
+  cursor: grab;
 }
+.carousel.dragging .track { cursor: grabbing; }
+.artwork img { -webkit-user-drag: none; user-select: none; }
 /* The marquee itself (and its eased pause-on-hover) is driven by carousel.js via the
    Web Animations API, so there is no CSS @keyframes animation here. */
 
 @media (prefers-reduced-motion: reduce) {
-  .carousel { overflow-x: auto; }
+  /* No JS marquee: fall back to native horizontal scrolling (needs touch-action back). */
+  .carousel { overflow-x: auto; touch-action: auto; }
 }
 
 /* ---------- Artwork ---------- */
