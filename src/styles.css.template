@@ -1,0 +1,138 @@
+/* This file is a TEMPLATE. The build (scripts/build.mjs) replaces the tokens
+   below with values from site.config.json and writes the result to dist/styles.css.
+   Do not edit dist/styles.css by hand — edit site.config.json (tokens) or this file. */
+
+:root {
+  --bg: {{backgroundColor}};
+  --fg: {{textColor}};
+  --font: {{fontFamily}};
+  --font-size: {{fontSize}};
+  --line-height: {{lineHeight}};
+  --img-border: {{imageBorder}};
+  --sold-color: {{soldDotColor}};
+  --sold-size: {{soldDotSize}};
+  --caption-gap: {{captionGap}};
+  --item-spacing: {{itemSpacing}};
+  --section-spacing: {{sectionSpacing}};
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  padding: 24px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Header ---------- */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  text-transform: uppercase;
+  margin-bottom: var(--section-spacing);
+}
+.site-header p { margin: 0; }
+
+.lang-switch { display: flex; gap: 8px; text-transform: uppercase; white-space: nowrap; }
+.lang-switch button {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: inherit; text-transform: uppercase;
+}
+.lang-switch button[aria-pressed="true"] { text-decoration: underline; }
+.lang-switch .sep { user-select: none; }
+
+/* ---------- Sections ---------- */
+.section { margin-bottom: var(--section-spacing); }
+.section-head { text-transform: uppercase; margin-bottom: 20px; }
+.section-subtitle { text-transform: uppercase; }
+
+/* ---------- Carousel ---------- */
+.carousel { overflow: hidden; width: 100%; }
+.track {
+  display: flex;
+  align-items: flex-start;
+  width: max-content;
+  will-change: transform;
+}
+.carousel[data-direction="left"]  .track { animation: scroll-left  var(--speed) linear infinite; }
+.carousel[data-direction="right"] .track { animation: scroll-right var(--speed) linear infinite; }
+
+/* Pause on hover — the only hover effect on the site */
+.carousel:hover .track { animation-play-state: paused; }
+
+@keyframes scroll-left  { from { transform: translateX(0);     } to { transform: translateX(-50%); } }
+@keyframes scroll-right { from { transform: translateX(-50%); } to { transform: translateX(0);     } }
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none !important; }
+  .carousel { overflow-x: auto; }
+}
+
+/* ---------- Artwork ---------- */
+.artwork {
+  flex: 0 0 auto;
+  width: calc(var(--w) * 1vw);
+  margin-right: var(--item-spacing);
+  display: flex;
+  flex-direction: column;
+}
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--caption-gap);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.artwork img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--ar);
+  object-fit: cover;
+  border: var(--img-border);
+}
+.sold-dot {
+  width: var(--sold-size);
+  height: var(--sold-size);
+  border-radius: 50%;
+  background: var(--sold-color);
+  margin-top: 14px;
+}
+
+/* ---------- Commissions badge (pure CSS text, no image) ---------- */
+.badge {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 130px;
+  height: 130px;
+  z-index: 50;
+}
+.badge a { display: block; width: 100%; height: 100%; position: relative; }
+.badge .ring { position: absolute; inset: 0; animation: badge-spin 14s linear infinite; }
+.badge .ring span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+@keyframes badge-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 640px) {
+  .badge { width: 104px; height: 104px; right: 12px; bottom: 12px; }
+  .site-header { flex-direction: column; }
+}

@@ -1,0 +1,63 @@
+{
+  "_comment": "Global site settings. The artist edits artworks.csv for the paintings; this file controls the look and the fixed text. All colors, fonts and sizes are parametrized here.",
+
+  "theme": {
+    "backgroundColor": "rgb(210, 190, 210)",
+    "textColor": "rgb(0, 0, 0)",
+    "fontFamily": "'Space Mono', monospace",
+    "fontSize": "14px",
+    "lineHeight": "18px",
+    "imageBorder": "1px solid rgb(0, 0, 0)",
+    "soldDotColor": "rgb(220, 30, 30)",
+    "soldDotSize": "14px",
+    "defaultImageWidth": 16,
+    "captionGap": "6px",
+    "itemSpacing": "40px",
+    "sectionSpacing": "90px"
+  },
+
+  "carousels": {
+    "PERSONAL": { "folder": "OBRA PERSONAL", "direction": "right", "scrollSpeed": 90 },
+    "ACADEMICA": { "folder": "OBRA ACADEMICA", "direction": "left", "scrollSpeed": 90 }
+  },
+
+  "images": {
+    "maxWidth": 1600,
+    "quality": 82
+  },
+
+  "header": {
+    "name": "JOSEP DURAN FRIGOLA",
+    "handle": "@JDFRIGOLA",
+    "email": "bondia@jdfrigola.com",
+    "copyright": "©2026"
+  },
+
+  "i18n": {
+    "defaultLang": "ca",
+    "languages": [
+      { "code": "ca", "label": "CAT" },
+      { "code": "es", "label": "ESP" },
+      { "code": "en", "label": "ENG" }
+    ],
+    "sections": {
+      "PERSONAL": {
+        "label": { "ca": "OBRA PERSONAL", "es": "OBRA PERSONAL", "en": "PERSONAL WORK" },
+        "subtitle": { "ca": "", "es": "", "en": "" }
+      },
+      "ACADEMICA": {
+        "label": { "ca": "OBRA ACADÈMICA", "es": "OBRA ACADÉMICA", "en": "ACADEMIC WORK" },
+        "subtitle": {
+          "ca": "FETA A LA BARCELONA ACADEMY OF ART ENTRE ELS ANYS 2024 I 2026",
+          "es": "REALIZADA EN LA BARCELONA ACADEMY OF ART ENTRE LOS AÑOS 2024 Y 2026",
+          "en": "MADE AT THE BARCELONA ACADEMY OF ART BETWEEN 2024 AND 2026"
+        }
+      }
+    },
+    "badge": {
+      "ca": "ACCEPTO ENCÀRRECS",
+      "es": "ACEPTO ENCARGOS",
+      "en": "OPEN FOR COMMISSIONS"
+    }
+  }
+}
