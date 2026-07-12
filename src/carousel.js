@@ -12,6 +12,8 @@
     defaultLang: "ca",
     languages: ["ca", "es", "en"],
     badge: { ca: "", es: "", en: "" },
+    hoverSlowFactor: 0.2,
+    hoverEaseMs: 600,
   };
   try {
     var el = document.getElementById("site-data");
@@ -24,8 +26,11 @@
 
   /* ------------------------- Marquee ------------------------- */
 
-  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-  function easeInCubic(t) { return t * t * t; }
+  // One symmetric easing for both slow-down and speed-up, so acceleration mirrors
+  // deceleration.
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
 
   function setupMarquee(carousel) {
     var track = carousel.querySelector(".track");
@@ -46,29 +51,31 @@
       easing: "linear",
     });
 
-    // Tween playbackRate smoothly so the carousel eases to a stop / back up to speed.
+    // Tween playbackRate smoothly (same easing + duration both ways) so the carousel
+    // slows down and speeds back up with a symmetric ramp.
+    var slowFactor = typeof data.hoverSlowFactor === "number" ? data.hoverSlowFactor : 0.2;
+    var easeMs = typeof data.hoverEaseMs === "number" ? data.hoverEaseMs : 600;
     var rafId = null;
-    function tweenRate(target, ease) {
+    function tweenRate(target) {
       if (rafId) cancelAnimationFrame(rafId);
       var from = anim.playbackRate;
-      var duration = 500;
       var startTs = null;
       function step(ts) {
         if (startTs === null) startTs = ts;
-        var t = Math.min(1, (ts - startTs) / duration);
-        anim.playbackRate = from + (target - from) * ease(t);
+        var t = easeMs > 0 ? Math.min(1, (ts - startTs) / easeMs) : 1;
+        anim.playbackRate = from + (target - from) * easeInOutCubic(t);
         if (t < 1) rafId = requestAnimationFrame(step);
         else rafId = null;
       }
       rafId = requestAnimationFrame(step);
     }
 
-    // Only ease to a stop while the pointer is over an IMAGE — not the caption text
-    // above it nor the empty space / sold-dot below it. Delegated so it works for every
-    // (duplicated) image in the moving track.
+    // While over an IMAGE (not the caption above nor the space/sold-dot below), slow the
+    // carousel to `slowFactor` of full speed — it keeps moving, never a hard stop.
+    // Delegated so it works for every (duplicated) image in the moving track.
     function overImage(e) { return e.target && e.target.tagName === "IMG"; }
-    carousel.addEventListener("mouseover", function (e) { if (overImage(e)) tweenRate(0, easeOutCubic); });
-    carousel.addEventListener("mouseout", function (e) { if (overImage(e)) tweenRate(1, easeInCubic); });
+    carousel.addEventListener("mouseover", function (e) { if (overImage(e)) tweenRate(slowFactor); });
+    carousel.addEventListener("mouseout", function (e) { if (overImage(e)) tweenRate(1); });
   }
 
   /* ------------------------- Badge ------------------------- */
@@ -141,6 +148,26 @@
 
     document.documentElement.lang = lang;
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+
+    equalizeCaptions(); // title lengths differ per language → re-align image tops
+  }
+
+  /* ------------------------- Image top-alignment ------------------------- */
+
+  // Make every image start at the same Y by giving all captions in a row the height of
+  // the tallest one (so images align to the "lowest" top). Runs per carousel row.
+  function equalizeCaptions() {
+    var carousels = document.querySelectorAll(".carousel");
+    for (var c = 0; c < carousels.length; c++) {
+      var caps = carousels[c].querySelectorAll(".caption");
+      var i, max = 0;
+      for (i = 0; i < caps.length; i++) caps[i].style.height = "auto";
+      for (i = 0; i < caps.length; i++) {
+        var h = caps[i].getBoundingClientRect().height;
+        if (h > max) max = h;
+      }
+      for (i = 0; i < caps.length; i++) caps[i].style.height = max + "px";
+    }
   }
 
   /* ------------------------- Init ------------------------- */
@@ -163,10 +190,19 @@
     applyLang(stored || data.defaultLang);
 
     buildBadge();
-    // Rebuild once the web font has loaded so character measurement is accurate.
+    equalizeCaptions();
+
+    // Re-run once the web font has loaded (glyph metrics change measurement/wrapping).
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(buildBadge);
+      document.fonts.ready.then(function () { buildBadge(); equalizeCaptions(); });
     }
+
+    // Re-align on resize (wrapping changes with width; also covers the 600px breakpoint).
+    var resizeTimer = null;
+    window.addEventListener("resize", function () {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(equalizeCaptions, 150);
+    });
   }
 
   if (document.readyState === "loading") {

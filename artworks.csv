@@ -1,18 +1,18 @@
 section;filename;show;order;width;sold;year;size;name_ca;name_es;name_en;technique_ca;technique_es;technique_en
 PERSONAL;Jdfrigola_Obra_Postres_de_Music_01.jpg;yes;1;25;yes;2026;20x30 cm (x2);Postres de músic (díptic, 1/2);Postre de músico (díptico, 1/2);Musician's dessert (diptych, 1/2);Oli sobre tela;Óleo sobre lienzo;Oil on canvas
 PERSONAL;Jdfrigola_Obra_Postres_de_Music_02.jpg;yes;2;25;yes;2026;20x30 cm (x2);Postres de músic (díptic, 2/2);Postre de músico (díptico, 2/2);Musician's dessert (diptych, 2/2);Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-PERSONAL;Jdfrigola_Obra_El_Menjador_De_Casa.jpg;yes;3;25;yes;2024;50x65 cm;El menjador de casa;El comedor de casa;The dining room at home;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+PERSONAL;Jdfrigola_Obra_El_Menjador_De_Casa.jpg;yes;3;30;yes;2024;50x65 cm;El menjador de casa;El comedor de casa;The dining room at home;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
 PERSONAL;Jdfrigola_Obra_Has_Collit_Els_Caquis_Den_Jordi.jpg;yes;4;30;yes;2024;60x92 cm;Has collit els caquis d'en Jordi;Has recogido los caquis de Jordi;You picked Jordi's persimmons;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-PERSONAL;Jdfrigola_Obra_Berenar_A_La_Fresca.jpg;yes;5;50;yes;2025;116x81 cm;Berenar a la fresca;Merienda al fresco;Afternoon’s snack;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+PERSONAL;Jdfrigola_Obra_Berenar_A_La_Fresca.jpg;yes;5;45;yes;2025;116x81 cm;Berenar a la fresca;Merienda al fresco;Afternoon’s snack;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
 PERSONAL;Jdfrigola_Obra_L_Esmorzar_del_Manobre.jpg;yes;6;40;yes;2024;92x60 cm;L'esmorzar del manobre;El desayuno del obrero;The handyman’s breakfast;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-PERSONAL;Jdfrigola_Obra_Tomata_I_Ceba_Al_Cop_De_Puny.jpg;yes;7;30;yes;2024;41x33 cm;Tomata i ceba al cop de puny;Tomate y cebolla al puñetazo;Tomato and smashed onion;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Autoretrat.jpg;yes;2;25;no;2026;-;Autoretrat;Autorretrato;Self-portrait;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Longpose_Julieta.jpg;yes;3;20;no;2026;50x100 cm;Longpose Julieta;Longpose Julieta;Longpose Julieta;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Longpose_Christian.jpg;yes;4;20;no;2026;50x100 cm;Longpose Christian;Longpose Christian;Longpose Christian;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Longpose_Mariana.jpg;yes;6;20;no;2025;-;Longpose Mariana;Longpose Mariana;Longpose Mariana;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
-ACADEMICA;Jdfrigola_BAA_Longpose_Paul.jpg;yes;7;20;no;2025;-;Longpose Paul;Longpose Paul;Longpose Paul;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
-ACADEMICA;Jdfrigola_BAA_Final_Project_Julieta.jpg;yes;1;30;no;2026;-;Projecte final (Julieta);Proyecto final (Julieta);Final project (Julieta);Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Still_Life_01.jpg;yes;5;30;yes;2026;-;Ressaca al pis de Plaça Revolució;Resaca en Plaça Revolució;Hangover in Plaça Revolució;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
-ACADEMICA;Jdfrigola_BAA_Cast_Homer.jpg;yes;8;25;no;2025;-;Cast Homer;Cast Homero;Cast Homer;Carbó sobre paper;Carboncillo sobre papel;Charcoal on paper
-ACADEMICA;Jdfrigola_BAA_Cast_Carpeaux.jpg;yes;9;25;no;2025;-;Cast Carpeaux;Cast Carpeaux;Cast Carpeaux;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
-ACADEMICA;Jdfrigola_BAA_Cast_Escultura.jpg;yes;10;20;no;2025;-;Cast dona;Cast mujer;Cast woman;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+PERSONAL;Jdfrigola_Obra_Tomata_I_Ceba_Al_Cop_De_Puny.jpg;no;7;30;yes;2024;41x33 cm;Tomata i ceba al cop de puny;Tomate y cebolla al puñetazo;Tomato and smashed onion;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Autoretrat.jpg;yes;2;35;no;2026;-;Autoretrat;Autorretrato;Self-portrait;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Longpose_Julieta.jpg;yes;3;25;no;2026;50x100 cm;Longpose Julieta;Longpose Julieta;Longpose Julieta;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Longpose_Christian.jpg;yes;4;25;no;2026;50x100 cm;Longpose Christian;Longpose Christian;Longpose Christian;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Longpose_Mariana.jpg;yes;6;25;no;2025;-;Longpose Mariana;Longpose Mariana;Longpose Mariana;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
+ACADEMICA;Jdfrigola_BAA_Longpose_Paul.jpg;yes;7;25;no;2025;-;Longpose Paul;Longpose Paul;Longpose Paul;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
+ACADEMICA;Jdfrigola_BAA_Final_Project_Julieta.jpg;yes;1;35;no;2026;-;Projecte final (Julieta);Proyecto final (Julieta);Final project (Julieta);Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Still_Life_01.jpg;yes;5;35;yes;2026;-;Ressaca al pis de Plaça Revolució;Resaca en Plaça Revolució;Hangover in Plaça Revolució;Oli sobre tela;Óleo sobre lienzo;Oil on canvas
+ACADEMICA;Jdfrigola_BAA_Cast_Homer.jpg;yes;8;30;no;2025;-;Cast Homer;Cast Homero;Cast Homer;Carbó sobre paper;Carboncillo sobre papel;Charcoal on paper
+ACADEMICA;Jdfrigola_BAA_Cast_Carpeaux.jpg;yes;9;30;no;2025;-;Cast Carpeaux;Cast Carpeaux;Cast Carpeaux;Carbó i white chalk sobre paper entonat;Carboncillo y white chalk sobre papel entonado;Charcoal and white chalk on toned paper
+ACADEMICA;Jdfrigola_BAA_Cast_Escultura.jpg;yes;10;25;no;2025;-;Cast dona;Cast mujer;Cast woman;Oli sobre tela;Óleo sobre lienzo;Oil on canvas

@@ -272,7 +272,8 @@ async function main() {
     fontWeight: t.fontWeight, fontSize: t.fontSize, lineHeight: t.lineHeight,
     imageBorder: t.imageBorder, soldDotColor: t.soldDotColor, soldDotSize: t.soldDotSize,
     soldDotGap: t.soldDotGap, itemSpacing: t.itemSpacing, siteMargin: t.siteMargin,
-    bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing,
+    bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing, sectionHeadGap: t.sectionHeadGap,
+    captionImageGap: t.captionImageGap, mobileBreakpoint: t.mobileBreakpoint, mobileImageWidth: t.mobileImageWidth,
     badgeColor: t.badgeColor, badgeFontSize: t.badgeFontSize, linkHoverColor: t.linkHoverColor,
   };
   for (const [k, v] of Object.entries(tokens)) {
@@ -285,6 +286,8 @@ async function main() {
     defaultLang: cfg.i18n.defaultLang,
     languages: cfg.i18n.languages.map(l => l.code),
     badge: cfg.i18n.badge,
+    hoverSlowFactor: cfg.theme.hoverSlowFactor,
+    hoverEaseMs: cfg.theme.hoverEaseMs,
   });
   // Commissions badge on/off switch: edit commissions.txt (on/off). Missing file = on.
   let commissionsOn = true;

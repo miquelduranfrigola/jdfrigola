@@ -9,20 +9,26 @@
     "textColor": "rgb(0, 0, 0)",
     "fontFamily": "'Geist Mono', monospace",
     "fontWeight": 400,
-    "fontSize": "14px",
-    "lineHeight": "18px",
+    "fontSize": "12px",
+    "lineHeight": "14px",
     "imageBorder": "1px solid rgb(0, 0, 0)",
     "soldDotColor": "rgb(220, 30, 30)",
     "soldDotSize": "20px",
-    "soldDotGap": "10px",
+    "soldDotGap": "5px",
     "defaultImageWidth": 16,
     "itemSpacing": "5px",
-    "siteMargin": "20px",
+    "siteMargin": "10px",
     "bottomMargin": "200px",
     "sectionSpacing": "90px",
+    "sectionHeadGap": "40px",
+    "captionImageGap": "10px",
+    "mobileBreakpoint": "600px",
+    "mobileImageWidth": 60,
     "badgeColor": "rgb(200, 0, 0)",
-    "badgeFontSize": "14px",
-    "linkHoverColor": "rgb(200, 0, 0)"
+    "badgeFontSize": "12px",
+    "linkHoverColor": "rgb(200, 0, 0)",
+    "hoverSlowFactor": 0.2,
+    "hoverEaseMs": 600
   },
 
   "carousels": {
@@ -39,7 +45,7 @@
     "name": "JOSEP DURAN FRIGOLA",
     "handle": "@JDFRIGOLA",
     "instagram": "https://www.instagram.com/jdfrigola",
-    "email": "bondia@jdfrigola.com",
+    "email": "jdfrigola@gmail.com",
     "copyright": "©2026"
   },
 
