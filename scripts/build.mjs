@@ -212,6 +212,16 @@ async function main() {
     const key = (row.section || "").toUpperCase();
     if (!cfg.carousels[key]) { warn(`Unknown section "${row.section}" for ${row.filename} — skipped`); continue; }
     const folder = cfg.carousels[key].folder;
+
+    // `show` defaults to yes; an explicit no hides the piece (still "listed", so it
+    // is not reported as an orphan, and its image is not processed).
+    const show = !/^\s*(n|0|false)/i.test(row.show || "");
+    if (!show) {
+      usedByFolder[folder].add(row.filename);
+      log(`  – ${key}  ${row.filename}  (hidden: show=no)`);
+      continue;
+    }
+
     const srcPath = path.join(CONTENT_DIR, folder, row.filename);
     if (!fs.existsSync(srcPath)) { warn(`File not found: content/${folder}/${row.filename} — skipped`); continue; }
 

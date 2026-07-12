@@ -1,18 +1,18 @@
-section,filename,order,width,sold,year,size,name_ca,name_es,name_en,technique_ca,technique_es,technique_en
-PERSONAL,Jdfrigola_Obra_Postres_de_Music_01.jpg,1,12,yes,2024,20X30 CM,"Postres de músic (díptic, 1/2)",,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_Postres_de_Music_02.jpg,2,12,yes,2024,20X30 CM,"Postres de músic (díptic, 2/2)",,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_El_Menjador_De_Casa.jpg,3,16,yes,2024,60X90 CM,El menjador de casa,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_Has_Collit_Els_Caquis_Den_Jordi.jpg,4,22,no,2024,60X90 CM,Has collit els caquis d'en Jordi,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_Berenar_A_La_Fresca.jpg,5,20,no,2024,,Berenar a la fresca,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_L_Esmorzar_del_Manobre.jpg,6,20,no,2024,,L'esmorzar del manobre,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-PERSONAL,Jdfrigola_Obra_Tomata_I_Ceba_Al_Cop_De_Puny.jpg,7,20,no,2024,,Tomata i ceba al cop de puny,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Autoretrat.jpg,1,15,no,2025,,Autoretrat,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Longpose_Julieta.jpg,2,14,no,2025,,Pose llarga (Julieta),,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Longpose_Christian.jpg,3,14,no,2025,,Pose llarga (Christian),,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Longpose_Mariana.jpg,4,14,no,2025,,Pose llarga (Mariana),,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Longpose_Paul.jpg,5,14,no,2025,,Pose llarga (Paul),,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Final_Project_Julieta.jpg,6,15,no,2026,,Projecte final (Julieta),,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Still_Life_01.jpg,7,18,no,2025,,Natura morta,,,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
-ACADEMICA,Jdfrigola_BAA_Cast_Homer.jpg,8,13,no,2024,,Còpia d'Homer,,,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper
-ACADEMICA,Jdfrigola_BAA_Cast_Carpeaux.jpg,9,13,no,2024,,Còpia de Carpeaux,,,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper
-ACADEMICA,Jdfrigola_BAA_Cast_Escultura.jpg,10,13,no,2024,,Còpia d'escultura,,,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper
+section,filename,show,order,width,sold,year,size,name_ca,name_es,name_en,technique_ca,technique_es,technique_en
+PERSONAL,Jdfrigola_Obra_Postres_de_Music_01.jpg,yes,1,12,yes,2024,20X30 CM,"Postres de músic (díptic, 1/2)","Postre de músico (díptico, 1/2)","Musician's dessert (diptych, 1/2)",Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_Postres_de_Music_02.jpg,yes,2,12,yes,2024,20X30 CM,"Postres de músic (díptic, 2/2)","Postre de músico (díptico, 2/2)","Musician's dessert (diptych, 2/2)",Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_El_Menjador_De_Casa.jpg,yes,3,16,yes,2024,60X90 CM,El menjador de casa,El comedor de casa,The dining room at home,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_Has_Collit_Els_Caquis_Den_Jordi.jpg,yes,4,22,no,2024,60X90 CM,Has collit els caquis d'en Jordi,Has recogido los caquis de Jordi,You've picked Jordi's persimmons,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_Berenar_A_La_Fresca.jpg,yes,5,20,no,2024,,Berenar a la fresca,Merienda al fresco,An afternoon snack in the cool air,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_L_Esmorzar_del_Manobre.jpg,yes,6,20,no,2024,,L'esmorzar del manobre,El almuerzo del peón,The labourer's breakfast,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+PERSONAL,Jdfrigola_Obra_Tomata_I_Ceba_Al_Cop_De_Puny.jpg,yes,7,20,no,2024,,Tomata i ceba al cop de puny,"Tomate y cebolla de un puñetazo","Tomato and onion, smashed with a fist",Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Autoretrat.jpg,yes,1,15,no,2025,,Autoretrat,Autorretrato,Self-portrait,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Longpose_Julieta.jpg,yes,2,14,no,2025,,Pose llarga (Julieta),Pose larga (Julieta),Long pose (Julieta),Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Longpose_Christian.jpg,yes,3,14,no,2025,,Pose llarga (Christian),Pose larga (Christian),Long pose (Christian),Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Longpose_Mariana.jpg,yes,4,14,no,2025,,Pose llarga (Mariana),Pose larga (Mariana),Long pose (Mariana),Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Longpose_Paul.jpg,yes,5,14,no,2025,,Pose llarga (Paul),Pose larga (Paul),Long pose (Paul),Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Final_Project_Julieta.jpg,yes,6,15,no,2026,,Projecte final (Julieta),Proyecto final (Julieta),Final project (Julieta),Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Still_Life_01.jpg,yes,7,18,no,2025,,Natura morta,Naturaleza muerta,Still life,Oli sobre tela,Óleo sobre lienzo,Oil on canvas
+ACADEMICA,Jdfrigola_BAA_Cast_Homer.jpg,yes,8,13,no,2024,,Còpia d'Homer,Copia de Homero,Copy of Homer,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper
+ACADEMICA,Jdfrigola_BAA_Cast_Carpeaux.jpg,yes,9,13,no,2024,,Còpia de Carpeaux,Copia de Carpeaux,Copy of Carpeaux,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper
+ACADEMICA,Jdfrigola_BAA_Cast_Escultura.jpg,yes,10,13,no,2024,,Còpia d'escultura,Copia de escultura,Copy of a sculpture,Carbó sobre paper,Carboncillo sobre papel,Charcoal on paper

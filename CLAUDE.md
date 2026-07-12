@@ -10,7 +10,7 @@ A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`
 
 A Node build (`scripts/build.mjs`, using `sharp`) reads three inputs and emits a self-contained static site into `dist/`:
 
-- **`artworks.csv`** — one row per painting; the **artist edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
+- **`artworks.csv`** — one row per painting; the **artist edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `show` (`no` hides the piece; defaults to yes), `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
 - **`site.config.json`** — all theme tokens (colours, font, sizes, spacing, badge) and fixed UI text in CA/ES/EN (header, section labels, academic subtitle, commissions badge). Everything visual is parametrized here.
 - **`content/OBRA PERSONAL/` and `content/OBRA ACADEMICA/`** — the source images (all JPEG), the source of truth for what displays.
 

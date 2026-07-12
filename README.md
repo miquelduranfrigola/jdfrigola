@@ -19,6 +19,7 @@ Numbers or Google Sheets. One row per image:
 | --- | --- |
 | `section` | `PERSONAL` or `ACADEMICA` — which carousel it goes in |
 | `filename` | exact image file name inside `content/OBRA PERSONAL/` or `content/OBRA ACADEMICA/` |
+| `show` | `yes` shows the piece on the site; `no` hides it (keeps the row but leaves it out) |
 | `order` | position within the carousel (1, 2, 3 …) |
 | `width` | how wide the image is, as a % of the screen (e.g. `16`). Height adjusts automatically |
 | `sold` | `yes` shows the red "sold" dot under the image; `no` hides it |
