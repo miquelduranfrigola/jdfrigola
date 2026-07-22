@@ -5,7 +5,7 @@
   "customDomain": "jdfrigola.com",
 
   "theme": {
-    "backgroundColor": "rgb(210, 190, 210)",
+    "backgroundColor": "rgb(120, 130, 125)",
     "textColor": "rgb(0, 0, 0)",
     "fontFamily": "'Geist Mono', monospace",
     "fontWeight": 400,
