@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "read-excel-file": "^9.3.10",
-    "sharp": "^0.33.5"
+    "sharp": "^0.35.4"
   },
   "allowScripts": {
     "sharp@0.33.5": true
