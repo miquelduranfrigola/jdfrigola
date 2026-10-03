@@ -4,18 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter. It is a single static page with two infinite, opposite-direction image carousels (*Obra Personal*, *Obra Acadèmica*), built from a data file + images and deployed to **GitHub Pages** via GitHub Actions. Live at https://miquelduranfrigola.github.io/jdfrigola/.
+A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter. It is a single static page with two infinite, opposite-direction image carousels (*Obra Personal*, *Obra Acadèmica*), built from a Google Sheet + a Google Drive image folder and deployed to **GitHub Pages** via GitHub Actions. Live at https://miquelduranfrigola.github.io/jdfrigola/.
 
 ## Architecture
 
-A Node build (`scripts/build.mjs`, using `sharp`) reads three inputs and emits a self-contained static site into `dist/`:
+A Node build (`scripts/build.mjs`, using `sharp`) reads its inputs and emits a self-contained static site into `dist/`. **Content lives in Google, not in the repo**; `scripts/google.mjs` fetches it with no credentials: the Sheet and the images folder are shared "Anyone with the link – Viewer", the Sheet is downloaded as a public `.xlsx` export (all tabs at once) and images through public Drive download URLs:
 
-- **`artworks.csv`** — one row per painting; the **artist edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `show` (`no` hides the piece; defaults to yes), `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
-- **`site.config.json`** — all theme tokens (colours, font, sizes, spacing, badge) and fixed UI text in CA/ES/EN (header, section labels, academic subtitle, commissions badge). Everything visual is parametrized here.
-- **`content/OBRA PERSONAL/` and `content/OBRA ACADEMICA/`** — the source images (all JPEG), the source of truth for what displays.
-- **`commissions.txt`** — `on`/`off` switch for the commissions badge (missing file = on).
+- **Google Sheet, `artworks` tab**: one row per painting; the **artist/contributor edits only this**. Columns: `section` (`PERSONAL`/`ACADEMICA`), `filename`, `show` (`no` hides the piece; defaults to yes), `order`, `width` (% of viewport; height derived from the image's real aspect ratio), `sold` (`yes`→red dot), `year`, `size`, and trilingual `name_{ca,es,en}` / `technique_{ca,es,en}`. Blank ES/EN fields fall back to CA at runtime.
+- **Google Sheet, `settings` tab** (`key | ca | es | en`): `commissions` on/off (missing = on), header fields, section labels/subtitles, badge text. `applySettings` in `build.mjs` overlays these onto `site.config.json`; blank cells keep the config default.
+- **Google Sheet, hidden `_files` tab** (`filename | id | modified`): the Drive images folder's contents, recursive. It is rewritten by the Sheet's *Publicar web* menu (`google/publish.gs`, which holds the folder id), since a public folder can't be listed without the Drive API. Images match rows by filename only. Downloads are cached in `.cache/images/`, keyed by file id + modified time.
+- **`site.config.json`**: theme tokens (colours, font, sizes, spacing, badge) plus *default* UI text in CA/ES/EN. Everything visual is parametrized here.
 
-`artworks.csv` may use commas or semicolons as the delimiter; the parser in `scripts/build.mjs` auto-detects it from the header row (Excel exports semicolons in many locales).
+Env: `GOOGLE_SHEET_ID` only (a GitHub repo variable in CI; a gitignored `.env` locally, loaded by `npm run build`).
 
 The template lives in `src/` (`template.html`, `styles.css.template` with `{{token}}` placeholders, `carousel.js`). The build injects tokens into the CSS, renders the HTML (each translatable node carries `data-ca/-es/-en` for the client-side language toggle), converts/optimizes images, and copies `carousel.js`. `carousel.js` drives the marquee via the **Web Animations API** (eased pause on hover through `playbackRate` tweening), the CAT/ESP/ENG toggle, and the circular commissions badge.
 
@@ -30,12 +30,13 @@ The template lives in `src/` (`template.html`, `styles.css.template` with `{{tok
 
 ## Conventions
 
-- **Language is Catalan-first** (CA/ES/EN toggle; CA is the fallback). Titles/labels come from `artworks.csv` and `site.config.json`.
-- **New/replacement images must be JPEG**, placed in the matching `content/` folder; add or edit the CSV row (same filename = drop-in replace, no CSV change).
+- **Language is Catalan-first** (CA/ES/EN toggle; CA is the fallback).
+- **Titles/labels come from the Sheet** (`artworks` and `settings` tabs), with `site.config.json` as the fallback. New images go into the Drive folder (JPEG/PNG); same filename = drop-in replace.
+- **Publishing**: the Sheet's *Web → Publicar web* menu (`google/publish.gs`, Apps Script) fires `workflow_dispatch` on `deploy.yml` using a fine-grained token stored in Script Properties.
 - **`docs/` is NOT the site source** — it holds the InDesign/PDF design mockups (`web_jdf_02.pdf` is the authoritative visual spec). GitHub Pages is configured with source = **GitHub Actions**, so `docs/` is never published; do not put built output there.
 
 ## Commands
 
-- `npm run build` — regenerate `dist/` from the CSV + config + images.
+- `npm run build` — regenerate `dist/` from the Sheet + Drive + config (needs `GOOGLE_SHEET_ID` in `.env`).
 - `npm run dev` — build and serve `dist/` locally.
-- Pushing to `main` triggers `.github/workflows/deploy.yml` (build + deploy to Pages).
+- Pushing to `main` or *Publicar web* in the Sheet triggers `.github/workflows/deploy.yml` (build + deploy to Pages).

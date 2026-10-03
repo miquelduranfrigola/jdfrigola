@@ -1,7 +1,8 @@
 name: Build and deploy to GitHub Pages
 
-# Rebuilds the site (reads artworks.csv + content/ images) and deploys on every
-# push to main. Also runnable manually from the Actions tab.
+# Rebuilds the site (reads the Google Sheet + Drive images) and deploys it.
+# Runs on every push to main (code/design changes) and on workflow_dispatch, which is
+# what the Sheet's "Web → Publicar web" menu triggers (google/publish.gs).
 on:
   push:
     branches: [main]
@@ -25,13 +26,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
 
       - name: Build site
         run: npm run build
+        env:
+          GOOGLE_SHEET_ID: ${{ vars.GOOGLE_SHEET_ID }}
 
       - uses: actions/configure-pages@v5
 

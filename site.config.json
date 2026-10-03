@@ -1,5 +1,5 @@
 {
-  "_comment": "Global site settings. The artist edits artworks.csv for the paintings; this file controls the look and the fixed text. All colors, fonts and sizes are parametrized here.",
+  "_comment": "Global site settings. The paintings come from the Google Sheet + Drive folder (see README). This file controls the look; its header and i18n texts are defaults that the Sheet's settings tab overrides.",
 
   "_customDomain_help": "Leave empty until the domain is registered AND its DNS points at GitHub Pages. Setting it makes the build emit dist/CNAME, which switches the site to that domain (and redirects the github.io URL to it).",
   "customDomain": "jdfrigola.com",
@@ -34,8 +34,8 @@
   },
 
   "carousels": {
-    "PERSONAL": { "folder": "OBRA PERSONAL", "direction": "left", "scrollSpeed": 45 },
-    "ACADEMICA": { "folder": "OBRA ACADEMICA", "direction": "right", "scrollSpeed": 45 }
+    "PERSONAL": { "direction": "left", "scrollSpeed": 45 },
+    "ACADEMICA": { "direction": "right", "scrollSpeed": 45 }
   },
 
   "images": {
