@@ -44,7 +44,7 @@ function toObjects(data) {
 }
 
 // Download the whole Sheet once and return its three tabs:
-//   artworks: [{section, filename, ...}]   (same columns the old artworks.csv had)
+//   artworks: [{section, filename, ...}]   (one row per painting)
 //   settings: { key: { ca, es, en } }
 //   files:    Map(filename → { id, modified })
 export async function readSheet() {

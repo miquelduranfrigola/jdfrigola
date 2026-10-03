@@ -6,7 +6,7 @@ A single static page with two infinite carousels — *Obra Personal* and *Obra A
 built from a **Google Sheet** (the texts) and a **Google Drive folder** (the images), and
 published to GitHub Pages from a menu in the Sheet.
 
-**Live site:** https://miquelduranfrigola.github.io/jdfrigola/
+**Live site:** https://jdfrigola.com
 
 ---
 
@@ -109,21 +109,14 @@ build fails, for example because Google can't be reached, the current site stays
 
 ## Custom domain (jdfrigola.com)
 
-The machinery is in place but **switched off** (`customDomain` is empty in `site.config.json`).
-Do NOT turn it on before DNS is ready, or the `github.io` URL will redirect to a domain that
-doesn't resolve yet.
+The site is served at **https://jdfrigola.com**. `customDomain` in `site.config.json` makes
+the build write `dist/CNAME`. DNS is in Cloudflare (DNS only, not proxied):
 
-Activate it in this order:
+- `A  @` → `185.199.108.153`, `.109.153`, `.110.153`, `.111.153`
+- `AAAA  @` → `2606:50c0:8000::153`, `:8001::153`, `:8002::153`, `:8003::153`
+- `CNAME  www` → `miquelduranfrigola.github.io`
 
-1. **Register** `jdfrigola.com` (Cloudflare Registrar).
-2. In Cloudflare **DNS**, add (set each to *DNS only* — grey cloud, not proxied):
-   - `A  @  185.199.108.153`, `.109.153`, `.110.153`, `.111.153` (four A records)
-   - `AAAA  @  2606:50c0:8000::153`, `:8001::153`, `:8002::153`, `:8003::153` (four AAAA)
-   - `CNAME  www  miquelduranfrigola.github.io`
-3. Wait until `jdfrigola.com` resolves to those IPs (minutes–hours).
-4. Set `"customDomain": "jdfrigola.com"` in `site.config.json` and push (the build then
-   writes `dist/CNAME`), and set the domain in **Settings → Pages** (or via `gh api`).
-5. Once GitHub provisions the certificate, enable **Enforce HTTPS**.
+Emptying `customDomain` would switch the site back to the `github.io` URL.
 
 ## License
 

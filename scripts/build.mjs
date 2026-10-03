@@ -108,7 +108,7 @@ function renderSection(key, cfg, itemsHTML) {
     </div>`;
 
   // The track holds the items twice for a seamless -50% loop; carousel.js reads
-  // data-direction / data-speed to drive the Web Animations marquee.
+  // data-direction / data-speed to drive the marquee loop.
   return `  <section class="section" id="section-${key.toLowerCase()}">
 ${head}
     <div class="carousel" data-direction="${esc(carousel.direction)}" data-speed="${speed}">

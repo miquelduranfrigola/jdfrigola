@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter. It is a single static page with two infinite, opposite-direction image carousels (*Obra Personal*, *Obra Acadèmica*), built from a Google Sheet + a Google Drive image folder and deployed to **GitHub Pages** via GitHub Actions. Live at https://miquelduranfrigola.github.io/jdfrigola/.
+A personal portfolio website for the artist **Josep Duran Frigola** (`jdfrigola`), a painter. It is a single static page with two infinite, opposite-direction image carousels (*Obra Personal*, *Obra Acadèmica*), built from a Google Sheet + a Google Drive image folder and deployed to **GitHub Pages** via GitHub Actions. Live at https://jdfrigola.com.
 
 ## Architecture
 
@@ -17,7 +17,7 @@ A Node build (`scripts/build.mjs`, using `sharp`) reads its inputs and emits a s
 
 Env: `GOOGLE_SHEET_ID` only (a GitHub repo variable in CI; a gitignored `.env` locally, loaded by `npm run build`).
 
-The template lives in `src/` (`template.html`, `styles.css.template` with `{{token}}` placeholders, `carousel.js`). The build injects tokens into the CSS, renders the HTML (each translatable node carries `data-ca/-es/-en` for the client-side language toggle), converts/optimizes images, and copies `carousel.js`. `carousel.js` drives the marquee via the **Web Animations API** (eased pause on hover through `playbackRate` tweening), the CAT/ESP/ENG toggle, and the circular commissions badge.
+The template lives in `src/` (`template.html`, `styles.css.template` with `{{token}}` placeholders, `carousel.js`). The build injects tokens into the CSS, renders the HTML (each translatable node carries `data-ca/-es/-en` for the client-side language toggle), converts/optimizes images, and copies `carousel.js`. `carousel.js` drives the marquee (see the draggable-carousel rule below), the CAT/ESP/ENG toggle, and the circular commissions badge.
 
 ## Design rules (strict — from the artist)
 
