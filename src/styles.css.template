@@ -97,6 +97,10 @@ a:hover,
   cursor: grab;
 }
 .carousel.dragging .track { cursor: grabbing; }
+/* Back-and-forth carousels keep the page margin at both ends, so the first picture lines
+   up with the text above it (and the last one ends the same distance from the edge). */
+.carousel[data-mode="pingpong"] .track { padding: 0 var(--site-margin); }
+.carousel[data-mode="pingpong"] .artwork:last-child { margin-right: 0; }
 /* The marquee, drag/swipe and eased hover-slow are all driven by carousel.js
    (a requestAnimationFrame loop), so there is no CSS animation here. */
 

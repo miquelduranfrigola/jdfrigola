@@ -2,6 +2,8 @@
    - Infinite marquee carousels driven by a requestAnimationFrame position loop: auto-scroll
      plus drag/swipe (touch, mouse, trackpad) with momentum that settles back into the
      auto-scroll; hovering an image eases it to a slow crawl.
+   - Carousels with few pictures (data-mode="pingpong") instead glide to one end, pause,
+     and glide back, easing in and out; they stay still, left-aligned, when they fit.
    - Image top-alignment: caption heights normalized per row so all image tops line up.
    - Language toggle (CAT / ESP / ENG) for captions and labels, persisted in localStorage.
    - Commissions badge: circular text showing ALL THREE languages at once (independent of
@@ -50,18 +52,53 @@
     var slowFactor = typeof data.hoverSlowFactor === "number" ? data.hoverSlowFactor : 0.2;
     var easeMs = typeof data.hoverEaseMs === "number" ? data.hoverEaseMs : 600;
     var tau = typeof data.dragSettleMs === "number" ? data.dragSettleMs : 350;
+    var pingpong = carousel.getAttribute("data-mode") === "pingpong";
+    var pauseMs = typeof data.pingPongPauseMs === "number" ? data.pingPongPauseMs : 2000;
 
-    // half = width of one copy of the item list (the track holds two); wrapping pos at
-    // `half` gives a seamless loop.
-    var half = 1;
-    function measure() { half = (track.scrollWidth / 2) || 1; }
+    var pos = 0;    // transform = translateX(-pos)
+    var vel = 0;    // px/ms (infinite mode)
+    var dragging = false;
+
+    // Infinite mode: half = width of one copy of the item list (the track holds two);
+    // wrapping pos at `half` gives a seamless loop.
+    // Ping-pong mode: pos runs between 0 and max (the overflow); `heading` is the end
+    // being travelled to (0 = start, 1 = end). Each leg eases from legFrom to that end.
+    var half = 1, max = 0;
+    var heading = dirSign > 0 ? 1 : 0, legFrom = 0, prog = 1, dur = 0, pauseLeft = 0;
+
+    function clampPos() { pos = Math.min(max, Math.max(0, pos)); }
+    function startLeg() {
+      legFrom = pos;
+      dur = Math.abs((heading ? max : 0) - pos) / (track.scrollWidth / (speed * 1000));
+      prog = 0;
+      pauseLeft = 0;
+    }
+    function stepPingPong(dt, rate) {
+      if (max <= 0) { pos = 0; return; }
+      if (pauseLeft > 0) {
+        pauseLeft -= dt;
+        if (pauseLeft <= 0) { heading = 1 - heading; startLeg(); }
+        return;
+      }
+      prog = dur > 0 ? Math.min(1, prog + dt * rate / dur) : 1;
+      var to = heading ? max : 0;
+      pos = legFrom + (to - legFrom) * easeInOutCubic(prog);
+      if (prog >= 1) pauseLeft = pauseMs;
+    }
+
+    var measured = false;
+    function measure() {
+      half = (track.scrollWidth / 2) || 1;
+      if (!pingpong) return;
+      max = Math.max(0, track.scrollWidth - carousel.clientWidth);
+      if (!measured) { pos = heading ? 0 : max; measured = true; } // start at the far end
+      clampPos();
+      startLeg();
+    }
     measure();
+    vel = dirSign * (half / (speed * 1000)); // infinite mode starts at auto speed
     window.addEventListener("resize", measure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-
-    var pos = 0;                                  // transform = translateX(-pos)
-    var vel = dirSign * (half / (speed * 1000));  // px/ms, starts at auto speed
-    var dragging = false;
 
     // Hover slow-down: rate multiplier eased 1 <-> slowFactor (symmetric, same as before).
     var rm = 1, rmFrom = 1, rmTo = 1, rmStart = -1;
@@ -80,12 +117,17 @@
         if (te >= 1) { rm = rmTo; rmStart = -1; }
       }
 
-      var autoV = dirSign * (half / (speed * 1000)) * rm;
-      if (!dragging) {
-        vel += (autoV - vel) * (1 - Math.exp(-dt / tau)); // momentum → settle to auto
-        pos += vel * dt;
+      if (pingpong) {
+        if (!dragging) stepPingPong(dt, rm);
+        clampPos();
+      } else {
+        var autoV = dirSign * (half / (speed * 1000)) * rm;
+        if (!dragging) {
+          vel += (autoV - vel) * (1 - Math.exp(-dt / tau)); // momentum → settle to auto
+          pos += vel * dt;
+        }
+        pos = ((pos % half) + half) % half;
       }
-      pos = ((pos % half) + half) % half;
       track.style.transform = "translateX(" + (-pos) + "px)";
       requestAnimationFrame(frame);
     }
@@ -127,7 +169,9 @@
       pending = false;
       if (dragging) { dragging = false; carousel.classList.remove("dragging"); }
       try { carousel.releasePointerCapture(e.pointerId); } catch (err) {}
-      // vel holds the fling; the relax term settles it back into the auto-scroll.
+      // Infinite: vel holds the fling; the relax term settles it back into the auto-scroll.
+      // Ping-pong: no fling; glide on from here toward the end it was heading to.
+      if (pingpong) { clampPos(); startLeg(); }
     }
     carousel.addEventListener("pointerup", endDrag);
     carousel.addEventListener("pointercancel", endDrag);
@@ -138,6 +182,7 @@
       e.preventDefault();
       pos += e.deltaX;
       vel = e.deltaX / 12;
+      if (pingpong) { clampPos(); startLeg(); }
     }, { passive: false });
   }
 

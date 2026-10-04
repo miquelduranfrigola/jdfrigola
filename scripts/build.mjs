@@ -89,7 +89,9 @@ function renderArtwork(row, img, theme, root) {
       </figure>`;
 }
 
-function renderSection(key, cfg, itemsHTML) {
+// Carousels with few pictures (≤ theme.pingPongMaxItems) glide back and forth instead of
+// looping, so their items are rendered once and marked data-mode="pingpong".
+function renderSection(key, cfg, itemsHTML, count) {
   const carousel = cfg.carousels[key];
   const labels = cfg.i18n.sections[key].label;
   const subtitle = cfg.i18n.sections[key].subtitle || {};
@@ -104,14 +106,14 @@ function renderSection(key, cfg, itemsHTML) {
   head += `
     </div>`;
 
-  // The track holds the items twice for a seamless -50% loop; carousel.js reads
-  // data-direction / data-speed to drive the marquee loop.
+  // An infinite track holds the items twice for a seamless -50% loop; carousel.js reads
+  // data-direction / data-speed / data-mode to drive the movement.
+  const pingpong = count <= (cfg.theme.pingPongMaxItems ?? 3);
   return `  <section class="section" id="section-${key.toLowerCase()}">
 ${head}
-    <div class="carousel" data-direction="${esc(carousel.direction)}" data-speed="${speed}">
+    <div class="carousel" data-direction="${esc(carousel.direction)}" data-speed="${speed}"${pingpong ? ' data-mode="pingpong"' : ""}>
       <div class="track">
-${itemsHTML}
-${itemsHTML}
+${pingpong ? itemsHTML : `${itemsHTML}\n${itemsHTML}`}
       </div>
     </div>
   </section>`;
@@ -316,6 +318,7 @@ async function main() {
     dragSettleMs: cfg.theme.dragSettleMs,
     bgCorners,
     bgPadding: cfg.theme.bgCornerPadding,
+    pingPongPauseMs: cfg.theme.pingPongPauseMs,
   });
   // Commissions badge on/off switch: `commissions` row of the settings tab. Missing = on.
   const commissionsOn = !/^\s*(off|no|false|0|disable)/i.test(settings.commissions?.ca || "");
@@ -338,7 +341,7 @@ async function main() {
         counts.push(`${id}: ${items.length}`);
         if (items.length === 0) return null; // empty carousel → left out
         const html = items.map(p => renderArtwork(p.row, p.img, cfg.theme, root)).join("\n");
-        return renderSection(id, cfg, html);
+        return renderSection(id, cfg, html, items.length);
       })
       .filter(Boolean)
       .join("\n\n");

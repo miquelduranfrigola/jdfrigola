@@ -57,6 +57,13 @@ One row per setting: `key | ca | es | en`. A blank cell keeps the default from `
 | `badge` | text of the commissions badge, per language |
 | `upper_left`, `upper_right`, `bottom_right`, `bottom_left` | background colors as `R, G, B` (e.g. `120, 130, 125`), `ca` column only — see below |
 
+### Carousels with few pictures
+
+A carousel with 3 pictures or fewer doesn't loop. It glides to one end, pauses 2 seconds,
+and glides back, slowing down smoothly at each end. If its pictures all fit on the screen,
+which is common on a computer, it stays still. Both numbers are in `site.config.json`
+(`pingPongMaxItems`, `pingPongPauseMs`).
+
 ### Background color
 
 With all four corner rows filled in, the background is a single color that changes as the
