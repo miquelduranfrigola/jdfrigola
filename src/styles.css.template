@@ -22,6 +22,8 @@
   --caption-image-gap: {{captionImageGap}};
   --mobile-image-width: {{mobileImageWidth}};
   --mobile-image-width-landscape: {{mobileImageWidthLandscape}};
+  --text-block-width: {{textBlockWidth}};
+  --text-block-gap: {{textBlockGap}};
   --badge-color: {{badgeColor}};
   --badge-font-size: {{badgeFontSize}};
   --link-hover: {{linkHoverColor}};
@@ -100,7 +102,18 @@ a:hover,
 /* Back-and-forth carousels keep the page margin at both ends, so the first picture lines
    up with the text above it (and the last one ends the same distance from the edge). */
 .carousel[data-mode="pingpong"] .track { padding: 0 var(--site-margin); }
-.carousel[data-mode="pingpong"] .artwork:last-child { margin-right: 0; }
+.carousel[data-mode="pingpong"] .artwork:last-child,
+.carousel[data-mode="pingpong"] .text-block:last-child { margin-right: 0; }
+
+/* Text-only carousel (the `shows` tab): fixed-width blocks; line breaks typed in the
+   Sheet cell become real lines (spacing from line-height only, no margins). */
+.text-block {
+  flex: 0 0 auto;
+  width: var(--text-block-width);
+  margin-right: var(--text-block-gap);
+  white-space: pre-line;
+  text-transform: uppercase;
+}
 /* The marquee, drag/swipe and eased hover-slow are all driven by carousel.js
    (a requestAnimationFrame loop), so there is no CSS animation here. */
 

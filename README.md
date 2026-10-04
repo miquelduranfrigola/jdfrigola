@@ -53,9 +53,17 @@ One row per setting: `key | ca | es | en`. A blank cell keeps the default from `
 | --- | --- |
 | `commissions` | `on` / `off` — the rotating "open for commissions" badge |
 | `name`, `handle`, `email`, `instagram`, `email_subject`, `copyright` | header (`ca` column only) |
-| `available_label`, `available_subtitle`, `complete_label`, `complete_subtitle` | titles of the top (*Obra disponible*) and bottom (*Obra*) carousels, per language |
+| `available_label`, `available_subtitle`, `complete_label`, `complete_subtitle` | titles of the top (*Obra disponible*) and middle (*Obra*) carousels, per language |
+| `shows_label`, `shows_subtitle` | title of the *Exposicions* carousel, per language |
 | `badge` | text of the commissions badge, per language |
 | `upper_left`, `upper_right`, `bottom_right`, `bottom_left` | background colors as `R, G, B` (e.g. `120, 130, 125`), `ca` column only — see below |
+
+### The `shows` tab — exhibitions
+
+Below the two picture carousels, *Exposicions* shows one text block per row of the `shows`
+tab (columns `ca | es | en`), in the same order as the rows. To put a line break inside a
+cell, press Ctrl+Enter (⌘+Enter on Mac); each line in the cell becomes a line on the site.
+A blank `es` or `en` falls back to the Catalan text. With no rows, the carousel is hidden.
 
 ### Carousels with few pictures
 

@@ -22,6 +22,8 @@
     "mobileBreakpoint": "600px",
     "mobileImageWidth": 70,
     "mobileImageWidthLandscape": 120,
+    "textBlockWidth": "250px",
+    "textBlockGap": "20px",
     "badgeColor": "rgb(200, 0, 0)",
     "badgeFontSize": "12px",
     "linkHoverColor": "rgb(200, 0, 0)",
@@ -40,13 +42,14 @@
     "AVAILABLE": { "section": "PERSONAL", "availableOnly": true, "direction": "left", "scrollSpeed": 45 },
     "COMPLETE": { "section": "PERSONAL", "direction": "right", "scrollSpeed": 45 },
     "PERSONAL": { "section": "PERSONAL", "direction": "left", "scrollSpeed": 45 },
-    "ACADEMICA": { "section": "ACADEMICA", "direction": "right", "scrollSpeed": 45 }
+    "ACADEMICA": { "section": "ACADEMICA", "direction": "right", "scrollSpeed": 45 },
+    "SHOWS": { "type": "text", "direction": "left", "scrollSpeed": 45 }
   },
 
   "_pages_help": "One HTML page per entry, at dist/<path>/index.html. Empty carousels are left out. `noindex` pages are unlisted: never link them, and never add them to a sitemap or robots.txt.",
   "pages": [
-    { "path": "", "carousels": ["AVAILABLE", "COMPLETE"], "badge": true },
-    { "path": "portfolio", "carousels": ["PERSONAL", "ACADEMICA"], "badge": false, "noindex": true }
+    { "path": "", "carousels": ["AVAILABLE", "COMPLETE", "SHOWS"], "badge": true },
+    { "path": "portfolio", "carousels": ["PERSONAL", "ACADEMICA", "SHOWS"], "badge": false, "noindex": true }
   ],
 
   "images": {
@@ -77,6 +80,10 @@
       },
       "COMPLETE": {
         "label": { "ca": "OBRA", "es": "OBRA", "en": "WORK" },
+        "subtitle": { "ca": "", "es": "", "en": "" }
+      },
+      "SHOWS": {
+        "label": { "ca": "EXPOSICIONS", "es": "EXPOSICIONES", "en": "SHOWS" },
         "subtitle": { "ca": "", "es": "", "en": "" }
       },
       "PERSONAL": {

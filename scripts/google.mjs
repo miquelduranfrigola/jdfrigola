@@ -47,6 +47,7 @@ function toObjects(data) {
 //   artworks: [{section, filename, ...}]   (one row per painting)
 //   settings: { key: { ca, es, en } }
 //   files:    Map(filename → { id, modified })
+//   shows:    [{ ca, es, en }]            (`shows` tab, row order; line breaks in cells kept)
 export async function readSheet() {
   const id = requireEnv("GOOGLE_SHEET_ID");
   const res = await fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`);
@@ -72,7 +73,11 @@ export async function readSheet() {
     if (row.filename && row.id) files.set(row.filename, { id: row.id, modified: row.modified || "" });
   }
 
-  return { artworks: tabs.get("artworks"), settings, files };
+  const shows = (tabs.get("shows") || [])
+    .map(r => ({ ca: r.ca || "", es: r.es || "", en: r.en || "" }))
+    .filter(s => s.ca || s.es || s.en);
+
+  return { artworks: tabs.get("artworks"), settings, files, shows };
 }
 
 // Download a Drive image into cacheDir, skipping it when the cached copy is from the

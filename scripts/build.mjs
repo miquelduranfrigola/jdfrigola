@@ -41,7 +41,8 @@ function esc(s) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/\n/g, "&#10;"); // keeps line breaks (e.g. multi-line shows) inside attributes
 }
 
 // Build data-ca / data-es / data-en attributes. data-ca is always emitted
@@ -91,6 +92,12 @@ function renderArtwork(row, img, theme, root) {
 
 // Carousels with few pictures (≤ theme.pingPongMaxItems) glide back and forth instead of
 // looping, so their items are rendered once and marked data-mode="pingpong".
+// One show from the `shows` tab: a fixed-width text block; its line breaks are rendered
+// by `white-space: pre-line`. Blank ES/EN fall back to CA client-side.
+function renderTextBlock(show) {
+  return `      <div class="text-block"${i18nAttrs(show.ca, show.es, show.en)}>${esc(show.ca)}</div>`;
+}
+
 function renderSection(key, cfg, itemsHTML, count) {
   const carousel = cfg.carousels[key];
   const labels = cfg.i18n.sections[key].label;
@@ -168,6 +175,7 @@ const HEADER_KEYS = {
 const I18N_KEYS = {
   available_label: ["AVAILABLE", "label"], available_subtitle: ["AVAILABLE", "subtitle"],
   complete_label: ["COMPLETE", "label"], complete_subtitle: ["COMPLETE", "subtitle"],
+  shows_label: ["SHOWS", "label"], shows_subtitle: ["SHOWS", "subtitle"],
   personal_label: ["PERSONAL", "label"], personal_subtitle: ["PERSONAL", "subtitle"],
   academic_label: ["ACADEMICA", "label"], academic_subtitle: ["ACADEMICA", "subtitle"],
 };
@@ -215,7 +223,7 @@ function readBgCorners(settings) {
 
 async function main() {
   const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "site.config.json"), "utf8"));
-  const { artworks: rows, settings, files: driveFiles } = await readSheet();
+  const { artworks: rows, settings, files: driveFiles, shows } = await readSheet();
   log(`Read ${rows.length} artwork rows from the Sheet, ${driveFiles.size} files in the Drive folder`);
   applySettings(cfg, settings);
 
@@ -301,6 +309,7 @@ async function main() {
     bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing, sectionHeadGap: t.sectionHeadGap,
     captionImageGap: t.captionImageGap, mobileBreakpoint: t.mobileBreakpoint, mobileImageWidth: t.mobileImageWidth,
     mobileImageWidthLandscape: t.mobileImageWidthLandscape,
+    textBlockWidth: t.textBlockWidth, textBlockGap: t.textBlockGap,
     badgeColor: t.badgeColor, badgeFontSize: t.badgeFontSize, linkHoverColor: t.linkHoverColor,
   };
   for (const [k, v] of Object.entries(tokens)) {
@@ -337,6 +346,12 @@ async function main() {
     const counts = [];
     const sectionsHTML = page.carousels
       .map(id => {
+        // Text carousels (the `shows` tab) keep the Sheet's row order.
+        if (cfg.carousels[id].type === "text") {
+          counts.push(`${id}: ${shows.length}`);
+          if (shows.length === 0) return null;
+          return renderSection(id, cfg, shows.map(renderTextBlock).join("\n"), shows.length);
+        }
         const items = carouselPieces(id);
         counts.push(`${id}: ${items.length}`);
         if (items.length === 0) return null; // empty carousel → left out
