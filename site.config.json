@@ -12,9 +12,6 @@
     "fontSize": "12px",
     "lineHeight": "14px",
     "imageBorder": "1px solid rgb(0, 0, 0)",
-    "soldDotColor": "rgb(220, 30, 30)",
-    "soldDotSize": "20px",
-    "soldDotGap": "5px",
     "defaultImageWidth": 16,
     "itemSpacing": "5px",
     "siteMargin": "10px",
@@ -33,10 +30,19 @@
     "dragSettleMs": 350
   },
 
+  "_carousels_help": "Each carousel takes the shown rows of one Sheet `section`; `availableOnly` keeps only rows whose `sold` is not yes. Pieces are ordered by `order`, highest first.",
   "carousels": {
-    "PERSONAL": { "direction": "left", "scrollSpeed": 45 },
-    "ACADEMICA": { "direction": "right", "scrollSpeed": 45 }
+    "AVAILABLE": { "section": "PERSONAL", "availableOnly": true, "direction": "left", "scrollSpeed": 45 },
+    "COMPLETE": { "section": "PERSONAL", "direction": "right", "scrollSpeed": 45 },
+    "PERSONAL": { "section": "PERSONAL", "direction": "left", "scrollSpeed": 45 },
+    "ACADEMICA": { "section": "ACADEMICA", "direction": "right", "scrollSpeed": 45 }
   },
+
+  "_pages_help": "One HTML page per entry, at dist/<path>/index.html. Empty carousels are left out. `noindex` pages are unlisted: never link them, and never add them to a sitemap or robots.txt.",
+  "pages": [
+    { "path": "", "carousels": ["AVAILABLE", "COMPLETE"], "badge": true },
+    { "path": "portfolio", "carousels": ["PERSONAL", "ACADEMICA"], "badge": false, "noindex": true }
+  ],
 
   "images": {
     "maxWidth": 1600,
@@ -60,6 +66,14 @@
       { "code": "en", "label": "ENG" }
     ],
     "sections": {
+      "AVAILABLE": {
+        "label": { "ca": "OBRA DISPONIBLE", "es": "OBRA DISPONIBLE", "en": "AVAILABLE WORK" },
+        "subtitle": { "ca": "", "es": "", "en": "" }
+      },
+      "COMPLETE": {
+        "label": { "ca": "OBRA", "es": "OBRA", "en": "WORK" },
+        "subtitle": { "ca": "", "es": "", "en": "" }
+      },
       "PERSONAL": {
         "label": { "ca": "OBRA PERSONAL", "es": "OBRA PERSONAL", "en": "PERSONAL WORK" },
         "subtitle": { "ca": "", "es": "", "en": "" }

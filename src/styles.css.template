@@ -14,9 +14,6 @@
   --font-size: {{fontSize}};
   --line-height: {{lineHeight}};
   --img-border: {{imageBorder}};
-  --sold-color: {{soldDotColor}};
-  --sold-size: {{soldDotSize}};
-  --sold-gap: {{soldDotGap}};
   --item-spacing: {{itemSpacing}};
   --site-margin: {{siteMargin}};
   --bottom-margin: {{bottomMargin}};
@@ -132,15 +129,6 @@ a:hover,
   user-select: none;
   -webkit-user-drag: none; /* no ghost-drag image while dragging the carousel */
 }
-.sold-dot {
-  width: var(--sold-size);
-  height: var(--sold-size);
-  border-radius: 50%;
-  background: var(--sold-color);
-  margin-top: var(--sold-gap);
-  align-self: flex-end; /* aligned to the right edge of the image */
-}
-
 /* ---------- Commissions badge (pure CSS text, no image) ----------
    Size + character placement are computed in carousel.js so the ring always fits
    all three languages. This file only sets position, colour and rotation. */

@@ -31,8 +31,6 @@ const SRC_DIR = path.join(ROOT, "src");
 const DIST_DIR = path.join(ROOT, "dist");
 const IMAGES_OUT = path.join(DIST_DIR, "images");
 
-const SECTION_ORDER = ["PERSONAL", "ACADEMICA"];
-
 /* ----------------------------- helpers ----------------------------- */
 
 function log(msg) { console.log(msg); }
@@ -68,10 +66,10 @@ async function processImage(srcPath, outName, opts) {
 
 /* ----------------------------- render ----------------------------- */
 
-function renderArtwork(row, img, theme) {
+// `root` is the path prefix from the page to the site root ("" or "../").
+function renderArtwork(row, img, theme, root) {
   const ar = (img.width / img.height).toFixed(4);
   const width = row.width && row.width.trim() !== "" ? row.width.trim() : theme.defaultImageWidth;
-  const sold = /^\s*(y|s|1|true)/i.test(row.sold || "");
 
   const lines = [];
   lines.push(`<span class="c-name"${i18nAttrs(row.name_ca, row.name_es, row.name_en)}>${esc(row.name_ca)}</span>`);
@@ -87,8 +85,7 @@ function renderArtwork(row, img, theme) {
         <figcaption class="caption">
           ${lines.join("\n          ")}
         </figcaption>
-        <img src="images/${esc(img.outName)}" alt="${esc(row.name_ca)}" loading="lazy" width="${img.width}" height="${img.height}">
-        ${sold ? '<span class="sold-dot" title="Venut / Vendido / Sold"></span>' : ""}
+        <img src="${root}images/${esc(img.outName)}" alt="${esc(row.name_ca)}" loading="lazy" width="${img.width}" height="${img.height}">
       </figure>`;
 }
 
@@ -167,6 +164,8 @@ const HEADER_KEYS = {
   email_subject: "emailSubject", copyright: "copyright",
 };
 const I18N_KEYS = {
+  available_label: ["AVAILABLE", "label"], available_subtitle: ["AVAILABLE", "subtitle"],
+  complete_label: ["COMPLETE", "label"], complete_subtitle: ["COMPLETE", "subtitle"],
   personal_label: ["PERSONAL", "label"], personal_subtitle: ["PERSONAL", "subtitle"],
   academic_label: ["ACADEMICA", "label"], academic_subtitle: ["ACADEMICA", "subtitle"],
 };
@@ -199,11 +198,13 @@ async function main() {
   // Track which Drive files are referenced, to warn about orphans.
   const used = new Set();
 
-  const bySection = { PERSONAL: [], ACADEMICA: [] };
+  // Shown pieces with processed images; carousels pick from these below.
+  const pieces = [];
+  const sections = new Set(Object.values(cfg.carousels).map(c => c.section));
 
   for (const row of rows) {
     const key = (row.section || "").toUpperCase();
-    if (!cfg.carousels[key]) { warn(`Unknown section "${row.section}" for ${row.filename} — skipped`); continue; }
+    if (!sections.has(key)) { warn(`Unknown section "${row.section}" for ${row.filename} — skipped`); continue; }
 
     // `show` defaults to yes; an explicit no hides the piece (still "listed", so it
     // is not reported as an orphan, and its image is not downloaded).
@@ -229,7 +230,13 @@ async function main() {
     }
 
     const order = parseInt(row.order, 10);
-    bySection[key].push({ order: isNaN(order) ? 9999 : order, html: renderArtwork(row, img, cfg.theme) });
+    pieces.push({
+      section: key,
+      row,
+      img,
+      order: isNaN(order) ? -Infinity : order, // no order → last
+      sold: /^\s*(y|s|1|true)/i.test(row.sold || ""),
+    });
     log(`  ✓ ${key}  ${row.filename}  (${img.width}×${img.height})`);
   }
 
@@ -238,14 +245,13 @@ async function main() {
     if (!used.has(name)) warn(`${name} is in the Drive folder but not listed in the Sheet — not shown`);
   }
 
-  // Assemble sections (sorted by order), skipping empty ones.
-  const sectionsHTML = SECTION_ORDER
-    .filter(key => bySection[key].length > 0)
-    .map(key => {
-      const items = bySection[key].sort((a, b) => a.order - b.order).map(x => x.html).join("\n");
-      return renderSection(key, cfg, items);
-    })
-    .join("\n\n");
+  // Pieces of one carousel, highest `order` first.
+  const carouselPieces = id => {
+    const c = cfg.carousels[id];
+    return pieces
+      .filter(p => p.section === c.section && !(c.availableOnly && p.sold))
+      .sort((x, y) => y.order - x.order);
+  };
 
   // Inject theme tokens into the CSS template.
   const t = cfg.theme;
@@ -253,8 +259,7 @@ async function main() {
   const tokens = {
     backgroundColor: t.backgroundColor, textColor: t.textColor, fontFamily: t.fontFamily,
     fontWeight: t.fontWeight, fontSize: t.fontSize, lineHeight: t.lineHeight,
-    imageBorder: t.imageBorder, soldDotColor: t.soldDotColor, soldDotSize: t.soldDotSize,
-    soldDotGap: t.soldDotGap, itemSpacing: t.itemSpacing, siteMargin: t.siteMargin,
+    imageBorder: t.imageBorder, itemSpacing: t.itemSpacing, siteMargin: t.siteMargin,
     bottomMargin: t.bottomMargin, sectionSpacing: t.sectionSpacing, sectionHeadGap: t.sectionHeadGap,
     captionImageGap: t.captionImageGap, mobileBreakpoint: t.mobileBreakpoint, mobileImageWidth: t.mobileImageWidth,
     mobileImageWidthLandscape: t.mobileImageWidthLandscape,
@@ -278,28 +283,51 @@ async function main() {
   const commissionsOn = !/^\s*(off|no|false|0|disable)/i.test(settings.commissions?.ca || "");
   log(`Commissions badge: ${commissionsOn ? "on" : "off"}`);
 
-  let html = fs.readFileSync(path.join(SRC_DIR, "template.html"), "utf8");
-  const repl = {
-    LANG: cfg.i18n.defaultLang,
-    HEADER: renderHeader(cfg.header),
-    LANG_SWITCH: renderLangSwitch(cfg.i18n.languages),
-    SECTIONS: sectionsHTML,
-    BADGE: commissionsOn ? renderBadge(cfg) : "",
-    SITE_DATA: siteData,
-  };
-  for (const [k, v] of Object.entries(repl)) {
-    html = html.replaceAll(`{{${k}}}`, v);
-  }
-
   // Cache-busting: append a short content hash to the CSS/JS URLs so browsers refetch
   // immediately after a deploy that changed them (GitHub Pages caches assets ~10 min),
   // while unchanged files keep their URL and stay cached.
+  const template = fs.readFileSync(path.join(SRC_DIR, "template.html"), "utf8");
   const jsContent = fs.readFileSync(path.join(SRC_DIR, "carousel.js"), "utf8");
   const hash = s => crypto.createHash("md5").update(s).digest("hex").slice(0, 8);
-  html = html
-    .replace('href="styles.css"', `href="styles.css?v=${hash(css)}"`)
-    .replace('src="carousel.js"', `src="carousel.js?v=${hash(jsContent)}"`);
-  fs.writeFileSync(path.join(DIST_DIR, "index.html"), html);
+
+  // One HTML page per entry in cfg.pages; images/CSS/JS are shared from the site root.
+  for (const page of cfg.pages) {
+    const root = page.path ? "../".repeat(page.path.split("/").length) : "";
+    const counts = [];
+    const sectionsHTML = page.carousels
+      .map(id => {
+        const items = carouselPieces(id);
+        counts.push(`${id}: ${items.length}`);
+        if (items.length === 0) return null; // empty carousel → left out
+        const html = items.map(p => renderArtwork(p.row, p.img, cfg.theme, root)).join("\n");
+        return renderSection(id, cfg, html);
+      })
+      .filter(Boolean)
+      .join("\n\n");
+
+    const repl = {
+      LANG: cfg.i18n.defaultLang,
+      ROBOTS: page.noindex ? '\n  <meta name="robots" content="noindex, nofollow">' : "",
+      ROOT: root,
+      HEADER: renderHeader(cfg.header),
+      LANG_SWITCH: renderLangSwitch(cfg.i18n.languages),
+      SECTIONS: sectionsHTML,
+      BADGE: page.badge && commissionsOn ? renderBadge(cfg) : "",
+      SITE_DATA: siteData,
+    };
+    let html = template;
+    for (const [k, v] of Object.entries(repl)) {
+      html = html.replaceAll(`{{${k}}}`, v);
+    }
+    html = html
+      .replace(`href="${root}styles.css"`, `href="${root}styles.css?v=${hash(css)}"`)
+      .replace(`src="${root}carousel.js"`, `src="${root}carousel.js?v=${hash(jsContent)}"`);
+
+    const outDir = path.join(DIST_DIR, page.path);
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, "index.html"), html);
+    log(`Page /${page.path}${page.noindex ? " (noindex)" : ""} — ${counts.join(", ")}`);
+  }
 
   // Copy the (static) front-end script verbatim.
   fs.copyFileSync(path.join(SRC_DIR, "carousel.js"), path.join(DIST_DIR, "carousel.js"));
@@ -315,8 +343,7 @@ async function main() {
     log(`Custom domain: ${domain} (wrote dist/CNAME)`);
   }
 
-  const total = bySection.PERSONAL.length + bySection.ACADEMICA.length;
-  log(`\nBuilt dist/ — ${total} images (PERSONAL: ${bySection.PERSONAL.length}, ACADEMICA: ${bySection.ACADEMICA.length}).`);
+  log(`\nBuilt dist/ — ${pieces.length} images, ${cfg.pages.length} pages.`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

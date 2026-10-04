@@ -2,7 +2,8 @@
 
 Portfolio website for the artist **Josep Duran Frigola**.
 
-A single static page with two infinite carousels — *Obra Personal* and *Obra Acadèmica* —
+A single static page with two infinite carousels — *Obra disponible* (pieces still for sale)
+and *Obra* (all personal work) —
 built from a **Google Sheet** (the texts) and a **Google Drive folder** (the images), and
 published to GitHub Pages from a menu in the Sheet.
 
@@ -24,12 +25,12 @@ updates in about 2 minutes. Nothing goes live until you click it.
 
 | Column | What it is |
 | --- | --- |
-| `section` | `PERSONAL` or `ACADEMICA` — which carousel it goes in |
+| `section` | `PERSONAL` or `ACADEMICA` — which collection the piece belongs to (the site shows `PERSONAL`) |
 | `filename` | exact file name of the picture in the **images** folder (e.g. `Jdfrigola_Obra_X.jpg`) |
 | `show` | `yes` shows the piece on the site; `no` hides it (keeps the row but leaves it out) |
-| `order` | position within the carousel (1, 2, 3 …) |
+| `order` | position within the carousel: the **highest number comes first** |
 | `width` | how wide the image is, as a % of the screen (e.g. `16`). Height adjusts automatically |
-| `sold` | `yes` shows the red "sold" dot under the image; `no` hides it |
+| `sold` | `yes` = sold. Unsold pieces also appear in the top carousel, *Obra disponible* |
 | `year` | e.g. `2024` |
 | `size` | e.g. `60X90 CM` |
 | `name_ca` / `name_es` / `name_en` | title in Catalan / Spanish / English |
@@ -52,7 +53,7 @@ One row per setting: `key | ca | es | en`. A blank cell keeps the default from `
 | --- | --- |
 | `commissions` | `on` / `off` — the rotating "open for commissions" badge |
 | `name`, `handle`, `email`, `instagram`, `email_subject`, `copyright` | header (`ca` column only) |
-| `personal_label`, `personal_subtitle`, `academic_label`, `academic_subtitle` | carousel titles, per language |
+| `available_label`, `available_subtitle`, `complete_label`, `complete_subtitle` | titles of the top (*Obra disponible*) and bottom (*Obra*) carousels, per language |
 | `badge` | text of the commissions badge, per language |
 
 ---
