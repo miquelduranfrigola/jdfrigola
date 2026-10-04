@@ -27,7 +27,9 @@
     "linkHoverColor": "rgb(200, 0, 0)",
     "hoverSlowFactor": 0.2,
     "hoverEaseMs": 600,
-    "dragSettleMs": 350
+    "dragSettleMs": 350,
+    "_bgCornerPadding_help": "4-corner background: how far in from the edges (fraction of the window) each pure corner color is reached.",
+    "bgCornerPadding": 0.05
   },
 
   "_carousels_help": "Each carousel takes the shown rows of one Sheet `section`; `availableOnly` keeps only rows whose `sold` is not yes. Pieces are ordered by `order`, highest first.",

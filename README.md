@@ -55,6 +55,16 @@ One row per setting: `key | ca | es | en`. A blank cell keeps the default from `
 | `name`, `handle`, `email`, `instagram`, `email_subject`, `copyright` | header (`ca` column only) |
 | `available_label`, `available_subtitle`, `complete_label`, `complete_subtitle` | titles of the top (*Obra disponible*) and bottom (*Obra*) carousels, per language |
 | `badge` | text of the commissions badge, per language |
+| `upper_left`, `upper_right`, `bottom_right`, `bottom_left` | background colors as `R, G, B` (e.g. `120, 130, 125`), `ca` column only — see below |
+
+### Background color
+
+With all four corner rows filled in, the background is a single color that changes as the
+mouse moves. Each corner's exact color is reached about 5% in from that corner, and it stays pure all
+the way to the edge; anywhere in between, the four colors blend. Phones and tablets have no mouse, so there the color follows
+the scroll instead, from the upper colors at the top of the page to the lower ones at the
+bottom. If any of the four rows is missing or wrong, the site uses the plain
+`backgroundColor` from `site.config.json`, and the build log says which row is the problem.
 
 ---
 

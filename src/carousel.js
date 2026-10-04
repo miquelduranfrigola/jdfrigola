@@ -5,7 +5,9 @@
    - Image top-alignment: caption heights normalized per row so all image tops line up.
    - Language toggle (CAT / ESP / ENG) for captions and labels, persisted in localStorage.
    - Commissions badge: circular text showing ALL THREE languages at once (independent of
-     the toggle), auto-sized so every character fits. */
+     the toggle), auto-sized so every character fits.
+   - Background: one solid color blended from four corner colors (bilinear). It follows the
+     mouse on devices with one, and page scroll (top → bottom) on touch devices. */
 
 (function () {
   "use strict";
@@ -233,7 +235,69 @@
 
   /* ------------------------- Init ------------------------- */
 
+  /* ----------------------- Background ----------------------- */
+
+  // The page is one solid color: the bilinear mix of the four corner colors at (u, v),
+  // where (0,0) is upper-left and (1,1) bottom-right. (u, v) eases toward the mouse
+  // position (or, without a mouse, toward the scroll position), and the loop sleeps
+  // once it has caught up.
+  function setupBackground() {
+    var c = data.bgCorners;
+    if (!c) return;
+
+    var lerp = function (a, b, t) { return a + (b - a) * t; };
+    // Pure colors sit `pad` in from the edges (e.g. 5%); the outer band stays pure.
+    var pad = typeof data.bgPadding === "number" ? data.bgPadding : 0.05;
+    var remap = function (t) { return (t - pad) / (1 - 2 * pad); };
+    function paint(u, v) {
+      var rgb = [0, 1, 2].map(function (i) {
+        return Math.round(lerp(lerp(c.ul[i], c.ur[i], u), lerp(c.bl[i], c.br[i], u), v));
+      });
+      document.documentElement.style.setProperty("--bg", "rgb(" + rgb.join(", ") + ")");
+    }
+
+    var cur = { u: 0.5, v: 0.5 };
+    var target = { u: 0.5, v: 0.5 };
+    var running = false;
+
+    function frame() {
+      var k = reduceMotion ? 1 : 0.1;
+      cur.u += (target.u - cur.u) * k;
+      cur.v += (target.v - cur.v) * k;
+      var done = Math.abs(target.u - cur.u) < 0.001 && Math.abs(target.v - cur.v) < 0.001;
+      if (done) { cur.u = target.u; cur.v = target.v; }
+      paint(cur.u, cur.v);
+      running = !done;
+      if (running) requestAnimationFrame(frame);
+    }
+    function moveTo(u, v) {
+      target.u = Math.min(1, Math.max(0, u));
+      target.v = Math.min(1, Math.max(0, v));
+      if (!running) { running = true; requestAnimationFrame(frame); }
+    }
+
+    var hasMouse = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (hasMouse) {
+      window.addEventListener("mousemove", function (e) {
+        moveTo(remap(e.clientX / window.innerWidth), remap(e.clientY / window.innerHeight));
+      }, { passive: true });
+    } else {
+      var fromScroll = function () {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        moveTo(0.5, remap(max > 0 ? window.scrollY / max : 0));
+      };
+      window.addEventListener("scroll", fromScroll, { passive: true });
+      window.addEventListener("resize", fromScroll);
+      fromScroll();
+      cur.u = target.u; cur.v = target.v; // start at the scroll position, no easing in
+      return;
+    }
+    paint(cur.u, cur.v);
+  }
+
   function init() {
+    setupBackground();
+
     var carousels = document.querySelectorAll(".carousel");
     for (var i = 0; i < carousels.length; i++) setupMarquee(carousels[i]);
 

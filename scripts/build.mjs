@@ -183,6 +183,32 @@ function applySettings(cfg, settings) {
   if (settings.badge) merge(cfg.i18n.badge, settings.badge);
 }
 
+// "120, 130, 125" or "rgb(120,130,125)" → [120, 130, 125]; null if not three 0–255 numbers.
+function parseRGB(text) {
+  const nums = String(text || "").match(/\d+(\.\d+)?/g);
+  if (!nums || nums.length !== 3) return null;
+  const rgb = nums.map(Number);
+  return rgb.every(n => n >= 0 && n <= 255) ? rgb : null;
+}
+
+// The four background anchor colors from the settings tab (keys like `upper_left`,
+// `Upper-left` or `upper left`), or null when any is missing/invalid.
+const BG_CORNERS = { ul: "upper_left", ur: "upper_right", br: "bottom_right", bl: "bottom_left" };
+
+function readBgCorners(settings) {
+  const byKey = {};
+  for (const [k, v] of Object.entries(settings)) byKey[k.replace(/[-\s]+/g, "_")] = v.ca;
+  const corners = {};
+  const bad = [];
+  for (const [id, key] of Object.entries(BG_CORNERS)) {
+    corners[id] = parseRGB(byKey[key]);
+    if (!corners[id]) bad.push(byKey[key] ? `${key} ("${byKey[key]}")` : key);
+  }
+  if (Object.values(BG_CORNERS).every(key => !byKey[key])) return null; // not set up: silent
+  if (bad.length) { warn(`Background corners missing/invalid: ${bad.join(", ")} — using the solid color`); return null; }
+  return corners;
+}
+
 /* ------------------------------ main ------------------------------ */
 
 async function main() {
@@ -253,6 +279,16 @@ async function main() {
       .sort((x, y) => y.order - x.order);
   };
 
+  // Background: when all four corner colors are set, start at their centre mix
+  // (carousel.js then follows the mouse / scroll); otherwise the solid theme color.
+  const bgCorners = readBgCorners(settings);
+  if (bgCorners) {
+    const mid = [0, 1, 2].map(i => Math.round(
+      (bgCorners.ul[i] + bgCorners.ur[i] + bgCorners.br[i] + bgCorners.bl[i]) / 4));
+    cfg.theme.backgroundColor = `rgb(${mid.join(", ")})`;
+  }
+  log(`Background: ${bgCorners ? "4-corner blend" : "solid"}`);
+
   // Inject theme tokens into the CSS template.
   const t = cfg.theme;
   let css = fs.readFileSync(path.join(SRC_DIR, "styles.css.template"), "utf8");
@@ -278,6 +314,8 @@ async function main() {
     hoverSlowFactor: cfg.theme.hoverSlowFactor,
     hoverEaseMs: cfg.theme.hoverEaseMs,
     dragSettleMs: cfg.theme.dragSettleMs,
+    bgCorners,
+    bgPadding: cfg.theme.bgCornerPadding,
   });
   // Commissions badge on/off switch: `commissions` row of the settings tab. Missing = on.
   const commissionsOn = !/^\s*(off|no|false|0|disable)/i.test(settings.commissions?.ca || "");
