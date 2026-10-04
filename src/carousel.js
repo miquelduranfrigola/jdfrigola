@@ -47,7 +47,7 @@
 
     var dir = carousel.getAttribute("data-direction") || "left";
     var speed = parseFloat(carousel.getAttribute("data-speed")) || 45; // s per half-loop
-    var dirSign = dir === "right" ? -1 : 1;
+    var dirSign = dir === "right" ? -1 : 1; // default; a gesture the other way flips it
 
     var slowFactor = typeof data.hoverSlowFactor === "number" ? data.hoverSlowFactor : 0.2;
     var easeMs = typeof data.hoverEaseMs === "number" ? data.hoverEaseMs : 600;
@@ -142,6 +142,15 @@
     // pointerdown — capturing only after a horizontal drag is confirmed keeps native
     // vertical page scrolling working when a touch starts on a carousel.
     var THRESH = 4, startX = 0, startY = 0, startPos = 0, pending = false, lastX = 0, lastT = 0;
+
+    // A clear push one way (a drag/swipe of 30px+, or a horizontal wheel) makes that the carousel's direction;
+    // in infinite mode the velocity relaxation then eases into it, in ping-pong mode the
+    // glide heads for that end.
+    function adoptDirection(sign) {
+      if (!sign) return;
+      dirSign = sign;
+      if (pingpong) heading = sign > 0 ? 1 : 0;
+    }
     carousel.addEventListener("pointerdown", function (e) {
       if (e.button && e.button !== 0) return; // primary button / touch only
       pending = true;
@@ -167,7 +176,14 @@
     function endDrag(e) {
       if (!pending) return;
       pending = false;
-      if (dragging) { dragging = false; carousel.classList.remove("dragging"); }
+      if (dragging) {
+        dragging = false;
+        carousel.classList.remove("dragging");
+        // A drag of 30px+ sets the direction (finger left, dx < 0, moves content left: +1);
+        // shorter nudges and taps don't.
+        var dragDx = e.clientX - startX;
+        if (Math.abs(dragDx) > 30) adoptDirection(-Math.sign(dragDx));
+      }
       try { carousel.releasePointerCapture(e.pointerId); } catch (err) {}
       // Infinite: vel holds the fling; the relax term settles it back into the auto-scroll.
       // Ping-pong: no fling; glide on from here toward the end it was heading to.
@@ -182,6 +198,7 @@
       e.preventDefault();
       pos += e.deltaX;
       vel = e.deltaX / 12;
+      if (Math.abs(e.deltaX) >= 4) adoptDirection(Math.sign(e.deltaX));
       if (pingpong) { clampPos(); startLeg(); }
     }, { passive: false });
   }
